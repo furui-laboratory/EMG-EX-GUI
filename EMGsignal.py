@@ -43,9 +43,11 @@ class EMGsignal(QObject):
                     self.finished_all_trial.emit()
                     self.stop_count()
                     return
+                # 次のclassのカウントにセット
                 self.count = self.sec_mes*2000/40
                 self.total_num -= 1
             else:
+                # 次のbreakのカウントにセット
                 self.count = self.sec_break*2000/40
             # flagを逆にする
             self.flag = not self.flag
