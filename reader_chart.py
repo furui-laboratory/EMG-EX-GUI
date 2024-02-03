@@ -19,8 +19,8 @@ import random
 class RaderChartWindow(QWidget):
 
     # def __init__(self,dh,number_electrode,maxemg):
-    def __init__(self,ch_num):
-        super().__init__()
+    def __init__(self,ch_num,parent=None):
+        super().__init__(parent)
         self.radius = 400
         self.maximum_emg = [1,1,1,1,1,1]
         self.number = ch_num

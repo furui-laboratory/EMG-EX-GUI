@@ -8,8 +8,8 @@ from reader_chart import RaderChartWindow
 
 class Progress(QWidget):
     
-    def __init__(self,sec_mes=7,sec_break=3):
-        super().__init__()
+    def __init__(self,sec_mes=7,sec_break=3,parent=None):
+        super().__init__(parent)
 
         # self.freq = 2000
         # self.timing = 40
@@ -21,10 +21,11 @@ class Progress(QWidget):
         self.initial_count = self.initial_count_break
         self.pbar = QProgressBar(self)
         # self.pbar.setGeometry(0, 0, 300, 50)
+        self.pbar.resize(1500, 50)
         self.pbar.setValue(0)
-        layout = QVBoxLayout()
-        layout.addWidget(self.pbar)
-        self.setLayout(layout)
+        # layout = QVBoxLayout()
+        # layout.addWidget(self.pbar)
+        # self.setLayout(layout)
         
         # self.setWindowTitle("QT Progressbar Example")
         # self.setGeometry(0,0,500,500)
@@ -51,7 +52,7 @@ class Progress(QWidget):
         value = self.pbar.value()
         if count > 0:
             # print(count)
-            value = 100*(1-count/self.initial_count)+1
+            value = 100*(1-count/self.initial_count)
             self.pbar.setValue(value)
         else:
             pass

@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar,QPushButton,QVBoxLayout,QWidget,QSizePolicy,QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar,QPushButton,QVBoxLayout,QWidget,QSizePolicy,QHBoxLayout,QLabel
 from PyQt5.QtCore import Qt
 from PyQt5 import QtTest
 import time
@@ -27,28 +27,33 @@ class MainWindow(QWidget):
     
     def initUI(self):
         self.setWindowTitle("計測中")
-        self.resize(1024, 640)          
+        self.setGeometry(0,0,1920,1080)        
+      
 
         # self.central_widget = QWidget(self)
         # self.setCentralWidget(self.central_widget)
         # self.reader_chart.setGeometry(100, 100, 200, 25)
 
-        self.reader_chart = RaderChartWindow(6)
-        self.progress = Progress()
-        self.image = ImageSlider()
+        self.reader_chart = RaderChartWindow(6,self)
+        self.progress = Progress(7,3,self)
+        self.image = ImageSlider(self)
+        # self.widget1 = QWidget()
+        # self.layout1 = QHBoxLayout()
+        # self.layout1.addWidget(self.reader_chart,4)
+        # self.layout1.addWidget(self.image,1)
+        # self.widget1.setLayout(self.layout1)
 
-        self.widget1 = QWidget()
-        self.layout1 = QHBoxLayout()
-        self.layout1.addWidget(self.reader_chart,4)
-        self.layout1.addWidget(self.image,1)
-        self.widget1.setLayout(self.layout1)
 
+        # self.layout = QVBoxLayout(self)
+        # self.layout.addWidget(self.widget1,4)
+        # self.layout.addWidget(self.progress,1)
+        # self.setLayout(self.layout)
+       
 
-        self.layout = QVBoxLayout(self)
-        self.layout.addWidget(self.widget1,4)
-        self.layout.addWidget(self.progress,1)
-        self.setLayout(self.layout)
-        self.showFullScreen()
+        self.progress.setGeometry(230, 900, 1500, 1000)
+        self.reader_chart.setGeometry(150, 10, 900, 900)
+        self.image.setGeometry(1200, 10, 900, 900)
+
 
        
         # self.layout = QVBoxLayout(self)

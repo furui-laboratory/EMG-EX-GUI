@@ -27,7 +27,7 @@ class EMGsignal(QObject):
         self.count = self.sec_break*2000/40
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.send_data)
-        self.timer.start(0.1)
+        self.timer.start(0.01)
 
     def send_data(self):
 
@@ -59,6 +59,7 @@ class EMGsignal(QObject):
         '''EMGデータの送信'''
         rng = np.random.default_rng()
         rawEMG = rng.random((40, 6)).tolist()
+        # rawEMG = [[i for i in range(6)] for j in range(40)]
         self.array_signal.emit(rawEMG)
     
 
