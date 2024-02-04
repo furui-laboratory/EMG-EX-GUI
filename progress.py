@@ -49,23 +49,30 @@ class Progress(QWidget):
         # self.show()
 
     def handleTimer(self,count):
-        value = self.pbar.value()
+        # value = self.pbar.value()
         if count > 0:
             # print(count)
             value = 100*(1-count/self.initial_count)
             self.pbar.setValue(value)
+            # print(f'count : {count}')
+            print(f'self.initial_count : {self.initial_count}')
         else:
             pass
 
     
     '''プログレスバーの値をリセットする.EMgsignalからclassemitsignalが発生したときに呼び出される'''
     def update_display(self,flag):
-        if flag:
-            self.initial_count = self.initial_count_mes
-        else:
-            self.initial_count = self.initial_count_break
 
+        print(f'update_display : {flag}')
         self.pbar.setValue(0)
+
+        if flag==False:
+            self.initial_count = self.initial_count_break
+            # print(f'self.initial_count:{self.initial_count_break}')
+        else:
+            self.initial_count = self.initial_count_mes
+            # print(f'self.initial_count:{self.initial_count}')
+            
 
     # def get_emg(self):
     #     time.sleep(0.02)

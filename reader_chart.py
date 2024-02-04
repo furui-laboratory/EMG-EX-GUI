@@ -22,7 +22,8 @@ class RaderChartWindow(QWidget):
     def __init__(self,ch_num,parent=None):
         super().__init__(parent)
         self.radius = 400
-        self.maximum_emg = [1,1,1,1,1,1]
+        '''仮で最大値を1としているが、実際は最大値を取得するプログラムを下記に記載する'''
+        self.maximum_emg = [1,1,1]
         self.number = ch_num
         self.rcData = [0 for i in range(self.number)] 
         # self.initUI()

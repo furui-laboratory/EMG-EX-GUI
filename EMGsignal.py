@@ -4,35 +4,38 @@ import pandas as pd
 import sys
 import numpy as np
 import time
+# from src.delsys import DataHandle
 
 class EMGsignal(QObject):
     # カスタムシグナルを定義
-    array_signal = pyqtSignal(list)
+    array_signal = pyqtSignal(np.ndarray)
     finished_class = pyqtSignal(bool)
     finished_all_trial = pyqtSignal()
     tick = pyqtSignal(float)
 
-    def __init__(self,trial_n,class_n,sec_mes=7,sec_break=3):
-        super().__init__()
+    def __init__(self,dh,trial_n,class_n,sec_break,sec_mes,parent=None):
+        super().__init__(parent)
         """それぞれのtrialとclass、Flagを定義する"""
         self.trial_n = trial_n
         self.class_n = class_n
+        self.dh = dh
         self.total_num = self.class_n*self.trial_n
         self.flag = False
         # self.datahandle = dh
         # self.datahandle.initialize_delsys()
         self.sec_break = sec_break
         self.sec_mes = sec_mes
+        print(f'trial : {self.trial_n}')
+        print(f'class : {self.class_n}')
+        print(f'sec_mes:{sec_mes}')
+        print(f'sec_break:{self.sec_break}')
         # 最初はbreakからスタートする
-        self.count = self.sec_break*2000/40
+        self.count = sec_break*2000/40
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.send_data)
         self.timer.start(0.01)
 
     def send_data(self):
-
-        """EMG の取得コードを書く"""
-        time.sleep(0.02)
 
         '''カウントデータの送信'''
         if self.count == 0:
@@ -51,16 +54,21 @@ class EMGsignal(QObject):
                 self.count = self.sec_break*2000/40
             # flagを逆にする
             self.flag = not self.flag
+            print(f'flag : {self.flag}')
             self.finished_class.emit(self.flag)
         else:
             self.count = self.count -1
             self.tick.emit(self.count)
         
         '''EMGデータの送信'''
-        rng = np.random.default_rng()
-        rawEMG = rng.random((40, 6)).tolist()
+        rawEMG = self.dh.get_emg(mode='raw')
+        # break以外の場合はデータを送信
+        if self.flag:
+            self.array_signal.emit(rawEMG)
+        # rng = np.random.default_rng()
+        # rawEMG = rng.random((40, 6)).tolist()
         # rawEMG = [[i for i in range(6)] for j in range(40)]
-        self.array_signal.emit(rawEMG)
+        
     
 
     def stop_count(self):
