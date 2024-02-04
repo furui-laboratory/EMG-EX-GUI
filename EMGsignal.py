@@ -58,10 +58,11 @@ class EMGsignal(QObject):
             self.finished_class.emit(self.flag)
         else:
             self.count = self.count -1
+            '''EMGデータの送信'''
+            rawEMG = self.dh.get_emg(mode='raw')
             self.tick.emit(self.count)
         
-        '''EMGデータの送信'''
-        rawEMG = self.dh.get_emg(mode='raw')
+        
         # break以外の場合はデータを送信
         if self.flag:
             self.array_signal.emit(rawEMG)
