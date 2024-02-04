@@ -12,6 +12,8 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtGui import QPainter, QColor, QBrush
 from PyQt5.QtCore import Qt, QTimer
 import random
+from src.delsys import DataHandle
+from scipy import signal
 # from src.delsys2 import DataHandle
 # from get_emg_max import GetMaxEmg
 
@@ -23,7 +25,7 @@ class RaderChartWindow(QWidget):
         super().__init__(parent)
         self.radius = 400
         '''仮で最大値を1としているが、実際は最大値を取得するプログラムを下記に記載する'''
-        self.maximum_emg = [1,1,1]
+        self.maximum_emg = [0.0001,0.0001,0.0001]
         self.number = ch_num
         self.rcData = [0 for i in range(self.number)] 
         # self.initUI()
@@ -36,19 +38,17 @@ class RaderChartWindow(QWidget):
         # self.show()
 
 
-    def initUI(self):
-        self.setGeometry(200, 200, 600, 600)
-
-
     def updatePaintEvent(self,rawEMG):
         ## PaintEvent内で筋電位信号のデータを取得しself.dataを更新する
        
         # rawRMG = self.dh.get_emg(mode='notch->rect->lpf')
         # self.rcData = np.mean(rawRMG,axis=0)*self.radius/self.maximum_emg
         '''EMGdataを整流平滑化するプログラムを下記に記載する'''
-        rectifiedEMG = rawEMG
+        proceed = DataHandle(n_channels=3)
+        rectifiedEMG = proceed._get_notched_rectified_lpf_emg(rawEMG)
         """シミュレーション実験"""
         self.rcData =  np.mean(rectifiedEMG,axis=0)*self.radius/self.maximum_emg
+        # print(f'rectifiedEMG : {self.rcData}')
         self.update()
 
     # def get_motion1(self):

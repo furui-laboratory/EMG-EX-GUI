@@ -100,6 +100,14 @@ class DataHandle:
             print('Error: undefined mode', file=sys.stderr)
             sys.exit(1)
 
+
+    def _get_notched_rectified_lpf_emg(self, rawEMG):
+        """Get norched and rectified and smoothed EMG"""
+        notched_emg = self._notch(rawEMG)
+        rectifiedEMG = np.abs(notched_emg)
+        return self._lpf(rectifiedEMG)
+    
+
     def _get_rectified_emg(self, rawEMG):
         """Get rectified EMG
         """
