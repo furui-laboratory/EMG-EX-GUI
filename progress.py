@@ -55,7 +55,7 @@ class Progress(QWidget):
             value = 100*(1-count/self.initial_count)
             self.pbar.setValue(value)
             # print(f'count : {count}')
-            print(f'self.initial_count : {self.initial_count}')
+            # print(f'self.initial_count : {self.initial_count}')
         else:
             pass
 
@@ -63,7 +63,7 @@ class Progress(QWidget):
     '''プログレスバーの値をリセットする.EMgsignalからclassemitsignalが発生したときに呼び出される'''
     def update_display(self,flag):
 
-        print(f'update_display : {flag}')
+        # print(f'update_display : {flag}')
         self.pbar.setValue(0)
 
         if flag==False:

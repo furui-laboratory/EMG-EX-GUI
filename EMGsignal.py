@@ -25,10 +25,10 @@ class EMGsignal(QObject):
         # self.datahandle.initialize_delsys()
         self.sec_break = sec_break
         self.sec_mes = sec_mes
-        print(f'trial : {self.trial_n}')
-        print(f'class : {self.class_n}')
-        print(f'sec_mes:{sec_mes}')
-        print(f'sec_break:{self.sec_break}')
+        # print(f'trial : {self.trial_n}')
+        # print(f'class : {self.class_n}')
+        # print(f'sec_mes:{sec_mes}')
+        # print(f'sec_break:{self.sec_break}')
         # 最初はbreakからスタートする
         self.count = sec_break*2000/40
         self.timer = QTimer(self)
@@ -36,6 +36,10 @@ class EMGsignal(QObject):
         self.timer.start(0.01)
 
     def send_data(self):
+
+        '''EMGデータの取得'''
+        rawEMG = self.dh.get_emg(mode='raw')
+        
 
         '''カウントデータの送信'''
         if self.count == 0:
@@ -54,18 +58,20 @@ class EMGsignal(QObject):
                 self.count = self.sec_break*2000/40
             # flagを逆にする
             self.flag = not self.flag
-            print(f'flag : {self.flag}')
+            # print(f'flag : {self.flag}')
             self.finished_class.emit(self.flag)
         else:
+            # break以外の場合はデータを送信
+            if self.flag:
+                self.array_signal.emit(rawEMG)
+        
             self.count = self.count -1
-            '''EMGデータの送信'''
-            rawEMG = self.dh.get_emg(mode='raw')
+            '''カウントデータの送信'''
             self.tick.emit(self.count)
+
         
         
-        # break以外の場合はデータを送信
-        if self.flag:
-            self.array_signal.emit(rawEMG)
+        
         # rng = np.random.default_rng()
         # rawEMG = rng.random((40, 6)).tolist()
         # rawEMG = [[i for i in range(6)] for j in range(40)]
