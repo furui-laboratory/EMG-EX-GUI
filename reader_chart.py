@@ -25,7 +25,7 @@ class RaderChartWindow(QWidget):
         super().__init__(parent)
         self.radius = 400
         '''仮で最大値を1としているが、実際は最大値を取得するプログラムを下記に記載する'''
-        self.maximum_emg = [0.0001,0.0001,0.0001]
+        self.maximum_emg = [0.0001 for i in range(ch_num)]
         self.number = ch_num
         self.rcData = [0 for i in range(self.number)] 
         # self.initUI()
@@ -44,7 +44,7 @@ class RaderChartWindow(QWidget):
         # rawRMG = self.dh.get_emg(mode='notch->rect->lpf')
         # self.rcData = np.mean(rawRMG,axis=0)*self.radius/self.maximum_emg
         '''EMGdataを整流平滑化するプログラムを下記に記載する'''
-        proceed = DataHandle(n_channels=3)
+        proceed = DataHandle(n_channels=self.number)
         rectifiedEMG = proceed._get_notched_rectified_lpf_emg(rawEMG)
         """シミュレーション実験"""
         self.rcData =  np.mean(rectifiedEMG,axis=0)*self.radius/self.maximum_emg

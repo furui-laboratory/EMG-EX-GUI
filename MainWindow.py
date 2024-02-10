@@ -36,7 +36,7 @@ class MainWindow(QWidget):
         self.EMGsinal_object.tick.connect(self.progress.handleTimer)
         # self.EMGsinal_object.tick.connect(self.view)
         # レーダーチャートの更新
-        self.EMGsinal_object.array_signal.connect(self.reader_chart.updatePaintEvent)
+        # self.EMGsinal_object.array_signal.connect(self.reader_chart.updatePaintEvent)
         # EMGデータの保存
         self.EMGsinal_object.array_signal.connect(self.save_emg)
         # EMGのプロット
@@ -61,10 +61,10 @@ class MainWindow(QWidget):
         # self.setCentralWidget(self.central_widget)
         # self.reader_chart.setGeometry(100, 100, 200, 25)
 
-        self.reader_chart = RaderChartWindow(3,self)
+        # self.reader_chart = RaderChartWindow(self.ch,self)
         self.progress = Progress(7,3,self)
         self.image = ImageSlider(self)
-        self.plot_emg = PlotWindow(self)
+        self.plot_emg = PlotWindow(self.ch,self)
         # self.widget1 = QWidget()
         # self.layout1 = QHBoxLayout()
         # self.layout1.addWidget(self.reader_chart,4)
@@ -79,9 +79,9 @@ class MainWindow(QWidget):
        
 
         self.progress.setGeometry(230, 900, 1500, 1000)
-        self.reader_chart.setGeometry(150, 10, 900, 900)
-        self.image.setGeometry(1200, 10, 100, 100)
-        self.plot_emg.setGeometry(1200, 600, 900, 900)
+        # self.reader_chart.setGeometry(780, 10, 900, 900)
+        self.image.setGeometry(350, 10, 900, 900)
+        self.plot_emg.setGeometry(850, 0, 900, 900)
 
 
        
