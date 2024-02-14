@@ -70,13 +70,7 @@ class PlotWindow(QWidget):
     def reset(self,flag):
         if flag==False:
             for c in range(self.ch):
-                self.data = np.zeros(14000)
-                self.curve.setData(np.arange(0, 14000), self.data)
-                # self.data = np.zeros(14000)
-                # self.curve = self.plt[c].plot(pen="y")
-                # self.curves[c].append(self.curve)
-                # self.curve = self.curves[c][-1]
-                # self.curve.setData(np.arange(0,14000), self.data)
+                self.plt[c].clear()
                 self.curves[c] = []
                 self.time[c] = 0
 

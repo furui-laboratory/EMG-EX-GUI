@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar,QPushButton,QVBoxLayout,QWidget,QSizePolicy,QHBoxLayout,QLabel
+from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 from PyQt5 import QtTest
 import time
@@ -49,6 +50,8 @@ class MainWindow(QWidget):
         self.EMGsinal_object.finished_class.connect(self.image.next_image)
         # EMGプロットのリセット
         self.EMGsinal_object.finished_class.connect(self.plot_emg.reset)
+        # Breakの表示
+        self.EMGsinal_object.finished_class.connect(self.display_break)
 
        
     
@@ -65,6 +68,10 @@ class MainWindow(QWidget):
         self.progress = Progress(7,3,self)
         self.image = ImageSlider(self)
         self.plot_emg = PlotWindow(self.ch,self)
+        self.Breaking_label = QLabel(self)
+        self.Class_label = QLabel(self)
+        self.display_break(False)
+        
         # self.widget1 = QWidget()
         # self.layout1 = QHBoxLayout()
         # self.layout1.addWidget(self.reader_chart,4)
@@ -79,10 +86,12 @@ class MainWindow(QWidget):
        
 
         self.progress.setGeometry(230, 900, 1500, 1000)
+        self.Breaking_label.setGeometry(950, 300, 900, 300)
+        self.Class_label.setGeometry(160, 70, 800, 200)
         # self.reader_chart.setGeometry(780, 10, 900, 900)
         self.image.setGeometry(350, 10, 900, 900)
         self.plot_emg.setGeometry(850, 0, 900, 900)
-
+        
 
        
         # self.layout = QVBoxLayout(self)
@@ -112,6 +121,31 @@ class MainWindow(QWidget):
 
     # def view(self,count):
     #     print(f'count : {count}')
+    
+    def display_break(self,flag):
+        if flag == False:
+            self.plot_emg.hide()
+            self.Breaking_label.show()
+            font_rest = QFont()
+            font_image = QFont()
+            font_rest.setPointSize(100)
+            font_image.setPointSize(50)
+            self.Breaking_label.setFont(font_rest)
+            self.Class_label.setFont(font_image)
+            self.Breaking_label.setText('Breaking')
+            self.Class_label.setText('Next Motion')
+            self.Class_label.setAlignment(Qt.AlignCenter)
+        else:
+            self.plot_emg.show()
+            self.Breaking_label.hide()
+            font = QFont()
+            font.setPointSize(50)
+            self.Class_label.setFont(font)
+            self.Class_label.setText(f'Class{self.class_}')
+           
+    
+
+        
 
 
 def main():

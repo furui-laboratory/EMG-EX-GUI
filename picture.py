@@ -8,8 +8,10 @@ class ImageSlider(QWidget):
     def __init__(self,parent=None):
         super().__init__(parent)
 
-        self.image_paths = [".\images\motion1.png", ".\images\motion2.png"]  # 画像ファイルのパスを適切に設定してください
+        # 画像ファイルのパスを適切に設定してください
+        self.image_paths = [".\images\motion1.png", ".\images\motion2.png"] 
         self.current_index = 0
+        self.idx = 0
 
         self.init_ui()
 
@@ -52,8 +54,10 @@ class ImageSlider(QWidget):
         self.image_label.setPixmap(pixmap)
 
     def next_image(self):
-        self.current_index = (self.current_index + 1) % len(self.image_paths)
+        if self.idx % 2 == 1:
+            self.current_index = (self.current_index + 1) % len(self.image_paths)
         self.load_image()
+        self.idx += 1
     
     
 
