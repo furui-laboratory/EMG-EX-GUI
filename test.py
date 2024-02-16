@@ -1,34 +1,29 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QDesktopWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtCore import pyqtSignal
 
-class FullScreenApp(QMainWindow):
+class MainWindow(QMainWindow):
+    closed = pyqtSignal()  # ウィンドウが閉じられたときのシグナル
+    
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("Close Event Example")
+        self.resize(300, 200)
+        
+    def closeEvent(self, event):
+        # ウィンドウが閉じられたときにシグナルを送信
+        self.closed.emit()
+        event.accept()
 
-        self.setWindowTitle('Full Screen App')
+def on_window_closed():
+    print("Window closed")
 
-        # フルスクリーンモードに設定
-        self.setGeometry(0,0,1920,1080)
-
-        # ディスプレイのサイズを取得
-        desktop = QDesktopWidget()
-        screen_rect = desktop.screenGeometry()
-
-        # フルスクリーン時の幅と高さを表示
-        print(f"Fullscreen Width: {screen_rect.width()}, Height: {screen_rect.height()}")
-
-        # ウィジェットの作成と配置
-        widget1 = QLabel('Widget 1', self)
-        widget1.setGeometry(50, 50, 200, 100)
-
-        widget2 = QLabel('Widget 2', self)
-        widget2.setGeometry(50, 200, 200, 100)
-
-        widget3 = QLabel('Widget 3', self)
-        widget3.setGeometry(50, 350, 200, 100)
-
-if __name__ == '__main__':
+def main():
     app = QApplication(sys.argv)
-    mainWindow = FullScreenApp()
-    mainWindow.show()
+    window = MainWindow()
+    window.show()
+    window.closed.connect(on_window_closed)  # ウィンドウが閉じられたときのシグナルに接続
     sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()
