@@ -12,6 +12,7 @@ from picture import ImageSlider
 from src.delsys import DataHandle
 import pandas as pd
 from plot_emg import PlotWindow
+# from menu import Menu
 
 class Setting(QWidget):
 
@@ -40,6 +41,17 @@ class Setting(QWidget):
         self.secondlabel = QWidget(self)
         self.secondwidget = QWidget(self)
         self.initUI()
+        self.back_button.clicked.connect(self.send_data)
+
+    def send_data(self):
+        ch = int(self.electrode_num.toPlainText())
+        class_n = int(self.class_num.toPlainText())
+        trial_n = int(self.trial_num.toPlainText())
+        sec_mes = int(self.m_time.toPlainText())
+        sec_class_break = int(self.rest_class.toPlainText())
+        sec_trial_break = int(self.rest_trial.toPlainText())
+        return ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break
+
 
 
         
