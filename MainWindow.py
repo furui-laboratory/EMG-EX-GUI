@@ -16,12 +16,15 @@ from plot_emg import PlotWindow
 class MainWindow(QWidget):
 
     """メインウィンドウ"""
-    def __init__(self):
+    def __init__(self,ch,class_n,trial_n,sec_mes,sec_class_break,state_display):
         super().__init__()
-        self.ch = 3
+
+        self.ch = ch
         # 試行数とクラス数の数値を定義
-        self.trial_n = 2
-        self.class_n = 2
+        self.trial_n = trial_n
+        self.class_n = class_n
+        self.sec_mes = sec_mes
+        self.sec_class_break = sec_class_break
         self.dh = DataHandle(self.ch)
         self.dh.initialize_delsys()
         # ラベルの初期化
@@ -29,7 +32,7 @@ class MainWindow(QWidget):
         self.class_ = 0
         # 現在の試行数とクラス数を求めるための変数
         self.tmp = 0    
-        self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,3,7,self)
+        self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
         self.initUI()
         # self.reader_chart.hide()
         self.EMGsinal_object.timer.start()
@@ -37,7 +40,7 @@ class MainWindow(QWidget):
         self.EMGsinal_object.tick.connect(self.progress.handleTimer)
         # self.EMGsinal_object.tick.connect(self.view)
         # レーダーチャートの更新
-        # self.EMGsinal_object.array_signal.connect(self.reader_chart.updatePaintEvent)
+        self.EMGsinal_object.array_signal.connect(self.reader_chart.updatePaintEvent)
         # EMGデータの保存
         self.EMGsinal_object.array_signal.connect(self.save_emg)
         # EMGのプロット
@@ -53,6 +56,11 @@ class MainWindow(QWidget):
         # Breakの表示
         self.EMGsinal_object.finished_class.connect(self.display_break)
 
+        if state_display == 1:
+            self.plot_emg.hide()
+        else:
+            self.plot_emg.show()
+
        
     
     def initUI(self):
@@ -64,7 +72,7 @@ class MainWindow(QWidget):
         # self.setCentralWidget(self.central_widget)
         # self.reader_chart.setGeometry(100, 100, 200, 25)
 
-        # self.reader_chart = RaderChartWindow(self.ch,self)
+        self.reader_chart = RaderChartWindow(self.ch,self)
         self.progress = Progress(7,3,self)
         self.image = ImageSlider(self)
         self.plot_emg = PlotWindow(self.ch,self)
@@ -148,13 +156,13 @@ class MainWindow(QWidget):
         
 
 
-def main():
-    """メイン関数"""
-    app = QApplication(sys.argv)
-    mv = MainWindow()
-    mv.show()
-    sys.exit(app.exec())
+# def main():
+#     """メイン関数"""
+#     app = QApplication(sys.argv)
+#     mv = MainWindow()
+#     mv.show()
+#     sys.exit(app.exec())
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

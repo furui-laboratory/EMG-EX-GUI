@@ -171,13 +171,13 @@ class Setting(QWidget):
         
       
 
-def main():
-    """メイン関数"""
-    app = QApplication(sys.argv)
-    mv = Setting()
-    mv.show()
-    sys.exit(app.exec())
+# def main():
+#     """メイン関数"""
+#     app = QApplication(sys.argv)
+#     mv = Setting()
+#     mv.show()
+#     sys.exit(app.exec())
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

@@ -13,6 +13,7 @@ from src.delsys import DataHandle
 import pandas as pd
 from plot_emg import PlotWindow
 from setting import Setting
+from MainWindow import MainWindow
 
 class GetEMGSetting(QWidget):
 
@@ -28,6 +29,7 @@ class GetEMGSetting(QWidget):
         self.check_emg_plot = QCheckBox('EMGプロットを表示する',self)
         self.button_start = QPushButton('計測開始',self)
         self.button_back = QPushButton('戻る',self)
+        self.button_start.clicked.connect(self.start)
 
         self.initUI()
 
@@ -39,6 +41,17 @@ class GetEMGSetting(QWidget):
         self.sec_class_break = sec_class_break
         self.sec_trial_break = sec_trial_break
 
+    
+    def start(self):
+        # 画面に表示させるもの情報をstateに格納
+        if self.check_reader_chart.isChecked():
+            state_display = 1
+        else:
+            state_display= 0
+        
+        self.mainwindow = MainWindow(self.ch,self.class_n,self.trial_n,self.sec_mes,self.sec_class_break,state_display)
+        self.mainwindow.show()
+        
 
        
     def initUI(self):
