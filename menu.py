@@ -14,6 +14,7 @@ from plot_emg import PlotWindow
 from setting import Setting
 from getemg_setting import GetEMGSetting
 from raderchart_mixup import Mixupshow
+from menu_emgonlineplot import WindowPlotOnlineEMG
 
 class Menu(QWidget):
 
@@ -32,6 +33,7 @@ class Menu(QWidget):
         self.settingWindow = Setting()
         self.saveemg_setting = GetEMGSetting()
         self.rader_chartwindow = Mixupshow()
+        self.plot_window = WindowPlotOnlineEMG()
 
         # 設定ボタンが押された時の処理
         self.button_setting.clicked.connect(self.hidewindow_setting)
@@ -46,6 +48,17 @@ class Menu(QWidget):
         self.button_readerchart.clicked.connect(self.hidewindow_readerchart)
         self.rader_chartwindow.button_back.clicked.connect(self.showwindow_readerchart)
         
+        # リアルタイム生波形表示ボタンが押された時の処理
+        self.button_online_emgplot.clicked.connect(self.hidewindow_plot_emg)
+        self.plot_emg.button_back.clicked.connect(self.showwindow_plot_emg)
+
+
+    def hidewindow_plot_emg(self):
+        ch,_,_,_,_,_ = self.settingWindow.send_data()
+        self.plot_window.set_parameter(ch)
+        self.plot_window.show()
+        self.hide()
+
 
     # 取得準備画面を表示
     def hidewindow_getemg(self):
