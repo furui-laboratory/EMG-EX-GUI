@@ -68,6 +68,8 @@ class DataHandle:
         """Stop for Delsys Trigno system.
         """
         self.dev.stop()
+        self.dev.__del__()
+        print("Stop.")
 
     def get_emg(self, mode='raw'):
         """Get EMG signals.

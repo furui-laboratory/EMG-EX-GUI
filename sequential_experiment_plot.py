@@ -121,6 +121,8 @@ class Sequential_Experiment_plot(QWidget):
             self.trial_ = 1 + (self.tmp//self.class_n)
             self.tmp += 1
 
+            print(f'trial{self.trial_}')
+
     # def view(self,count):
     #     print(f'count : {count}')
     

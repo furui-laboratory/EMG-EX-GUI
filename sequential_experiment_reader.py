@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar,QPushButton,QVBoxLayout,QWidget,QSizePolicy,QHBoxLayout,QLabel
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,pyqtSignal
 from PyQt5 import QtTest
 import time
 from EMGsignal import EMGsignal
@@ -14,7 +14,7 @@ import pandas as pd
 from plot_emg import PlotWindow
 
 class Sequential_Experiment_reader(QWidget):
-
+    closed = pyqtSignal()
     """メインウィンドウ"""
     def __init__(self,ch,class_n,trial_n,sec_mes,sec_class_break,parent=None):
         super().__init__(parent)
@@ -112,6 +112,13 @@ class Sequential_Experiment_reader(QWidget):
     #     else:
     #         self.reader_chart.hide()
         
+    def closeEvent(self, event):
+        # ウィンドウが閉じられたときにシグナルを送信
+        self.EMGsinal_object.timer.stop()
+        self.dh.stop_delsys()
+        self.closed.emit()
+        event.accept()
+        
     def save_emg(self,rawEMG):
         pd.DataFrame(rawEMG).to_csv(f'./data/raw/trial{self.trial_}class{self.class_}.csv', mode='a', index = False, header=False)
     
@@ -120,6 +127,8 @@ class Sequential_Experiment_reader(QWidget):
             self.class_ = ((self.tmp) % (self.class_n)) + 1
             self.trial_ = 1 + (self.tmp//self.class_n)
             self.tmp += 1
+
+            print(f'trial{self.trial_}')
 
     # def view(self,count):
     #     print(f'count : {count}')

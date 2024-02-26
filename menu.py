@@ -6,7 +6,6 @@ from PyQt5 import QtTest
 from PyQt5 import QtGui
 import time
 from EMGsignal import EMGsignal
-from reader_chart import RaderChartWindow
 from progress import Progress
 from picture import ImageSlider
 from src.delsys import DataHandle
@@ -14,6 +13,7 @@ import pandas as pd
 from plot_emg import PlotWindow
 from setting import Setting
 from getemg_setting import GetEMGSetting
+from raderchart_mixup import Mixupshow
 
 class Menu(QWidget):
 
@@ -31,7 +31,9 @@ class Menu(QWidget):
 
         self.settingWindow = Setting()
         self.saveemg_setting = GetEMGSetting()
+        self.rader_chartwindow = Mixupshow()
 
+        # 設定ボタンが押された時の処理
         self.button_setting.clicked.connect(self.hidewindow_setting)
         self.settingWindow.back_button.clicked.connect(self.showwindow_setting)
         
@@ -40,16 +42,10 @@ class Menu(QWidget):
         # 遷移先である取得準備画面の戻るボタンが押された時の処理
         self.saveemg_setting.button_back.clicked.connect(self.showwindow_getemg)
 
-    
-    def hidewindow_setting(self):
-        self.settingWindow.show()
-        self.hide()
-
-    def showwindow_setting(self):
-        self.show()
-        ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break = self.settingWindow.send_data()
-        print(ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break)
-        self.settingWindow.hide()
+        # レーダーチャートボタンが押された時の処理
+        self.button_readerchart.clicked.connect(self.hidewindow_readerchart)
+        self.rader_chartwindow.button_back.clicked.connect(self.showwindow_readerchart)
+        
 
     # 取得準備画面を表示
     def hidewindow_getemg(self):
@@ -58,11 +54,31 @@ class Menu(QWidget):
         self.saveemg_setting.set_parameter(ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break)
         self.saveemg_setting.show()
         self.hide()
+
+
+    def hidewindow_setting(self):
+        self.settingWindow.show()
+        self.hide()
+
+    def hidewindow_readerchart(self):
+        ch,_,_,_,_,_ = self.settingWindow.send_data()
+        self.rader_chartwindow.set_parameter(ch)
+        self.rader_chartwindow.show()
+        self.hide()
+
+    def showwindow_setting(self):
+        self.show()
+        ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break = self.settingWindow.send_data()
+        print(ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break)
+        self.settingWindow.hide()
     
     def showwindow_getemg(self):
         self.show()
         self.saveemg_setting.hide()
-
+    
+    def showwindow_readerchart(self):
+        self.show()
+        self.rader_chartwindow.hide()
 
        
     def initUI(self):
