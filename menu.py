@@ -50,7 +50,7 @@ class Menu(QWidget):
         
         # リアルタイム生波形表示ボタンが押された時の処理
         self.button_online_emgplot.clicked.connect(self.hidewindow_plot_emg)
-        self.plot_emg.button_back.clicked.connect(self.showwindow_plot_emg)
+        self.plot_window.button_back.clicked.connect(self.showwindow_plot_emg)
 
 
     def hidewindow_plot_emg(self):
@@ -58,7 +58,6 @@ class Menu(QWidget):
         self.plot_window.set_parameter(ch)
         self.plot_window.show()
         self.hide()
-
 
     # 取得準備画面を表示
     def hidewindow_getemg(self):
@@ -92,6 +91,10 @@ class Menu(QWidget):
     def showwindow_readerchart(self):
         self.show()
         self.rader_chartwindow.hide()
+
+    def showwindow_plot_emg(self):
+        self.show()
+        self.plot_window.hide()
 
        
     def initUI(self):
