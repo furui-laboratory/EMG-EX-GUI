@@ -5,11 +5,12 @@ from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWid
 
 
 class ImageSlider(QWidget):
-    def __init__(self,parent=None):
+    def __init__(self,image_path,parent=None):
         super().__init__(parent)
 
         # 画像ファイルのパスを適切に設定してください
-        self.image_paths = [".\images\motion1.png", ".\images\motion2.png"] 
+        self.image_paths = image_path
+        # self.image_paths = [".\images\motion1.png", ".\images\motion2.png"] 
         self.current_index = 0
         self.idx = 0
 

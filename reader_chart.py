@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget,QDialog,QVBoxLayout,QLineEdit,QPushButton
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTimer
 import sys
