@@ -98,6 +98,8 @@ class DataHandle:
             return self._get_rectified_emg(rawEMG)
         elif mode == 'lpf':
             return self._get_rectified_lpf_emg(rawEMG)
+        elif mode == 'notchlpf':
+            return self._get_notched_rectified_lpf_emg(rawEMG)
         else:
             print('Error: undefined mode', file=sys.stderr)
             sys.exit(1)

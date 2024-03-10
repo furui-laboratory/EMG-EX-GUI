@@ -73,4 +73,5 @@ class GetMaxEMG(QWidget):
         self.timer.start(1)
 
 
+
         

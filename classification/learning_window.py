@@ -93,13 +93,23 @@ class LearningWindow(QWidget):
         
         
         
+    # def closeEvent(self, event):
+    #     # ウィンドウが閉じられたときにシグナルを送信
+    #     '''simulation'''
+    #     self.EMGsinal_object.timer.stop()
+    #     self.dh.stop_delsys()
+    #     self.closed.emit()
+    #     event.accept()
+    
     def closeEvent(self, event):
         # ウィンドウが閉じられたときにシグナルを送信
-        '''simulation'''
-        self.EMGsinal_object.timer.stop()
+        print('before closed')
         self.dh.stop_delsys()
-        self.closed.emit()
-        event.accept()
+        # self.close()
+        # event.accept()
+        print('after close')
+        self.close()
+
         
     def save_emg(self,rawEMG):
         pd.DataFrame(rawEMG).to_csv(f'./classification/train_data/trial{self.trial_}class{self.class_}.csv', mode='a', index = False, header=False)

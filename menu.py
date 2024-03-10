@@ -119,10 +119,13 @@ class Menu(QWidget):
     
     def showwindow_readerchart(self):
         self.show()
+        self.rader_chartwindow.backbutton_event()
         self.rader_chartwindow.close()
 
     def showwindow_plot_emg(self):
         self.show()
+        # self.plot_window.hide()
+        self.plot_window.backbutton_event()
         self.plot_window.close()
     
     def showwindow_emgmax(self):

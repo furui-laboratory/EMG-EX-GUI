@@ -11,7 +11,7 @@ import statistics
 from EMGsignal import EMGsignal
 from progress import Progress
 from picture import ImageSlider
-from src.delsys2 import DataHandle
+from src.delsys import DataHandle
 from reader_chart import RaderChartWindow
 from classification.probability_window import ProbabilityWindow
 
@@ -25,10 +25,10 @@ class PredictionWindow(QWidget):
         self.ch = ch
         self.class_n = class_n
         self.name_label = ['グー','チョキ','パー']
-        self.label_gu = QLabel('グー',self)
+        self.label_gu = QLabel('パー',self)
         self.label_choki = QLabel('チョキ',self)
-        self.label_pa = QLabel('パー',self)
-        self.prediction_class_label = QLabel(self)
+        self.label_pa = QLabel('グー',self)
+        self.prediction_class_label = QLabel('予測クラス',self)
         # delsys初期化
         self.dh = DataHandle(self.ch)
         self.dh.initialize_delsys()
@@ -60,18 +60,20 @@ class PredictionWindow(QWidget):
 
 
     
-    def closed(self, event):
+    def closeEvent(self, event):
         # ウィンドウが閉じられたときにシグナルを送信
+        print('before closed')
+        self.timer.stop()
         self.dh.stop_delsys()
         # self.close()
-        self.closed.emit()
-        event.accept()
+        # event.accept()
+        print('after close')
         self.close()
   
 
     def getEMG(self):
         # 整流平滑化データ取得
-        rectifiedEMG = self.dh.get_emg(mode='notch->rect->lpf')
+        rectifiedEMG = self.dh.get_emg(mode='notchlpf')
         # レーダーチャートをアップデート
         self.reader_chart.updatePaintEvent(rectifiedEMG)
         # 予測確率と予測クラスを取得
@@ -79,12 +81,14 @@ class PredictionWindow(QWidget):
         # 棒グラフをアップデート
         self.bar_graph.update(prb=prb_value)
         # 予測クラスを取得
-        self.prediction_class=statistics.mode(np.argmax(prb_value,axis=1))
-        # print(self.prediction_class)
-        # 予測ラベルを更新する
-        self.prediction_class_label.setText(self.name_label[self.prediction_class])
+        th = np.mean(prb_value,axis=0)
+        if np.max(th) > 0.8:
+            self.prediction_class=np.argmax(th)
+            # print(self.prediction_class)
+            # 予測ラベルを更新する
+            self.prediction_class_label.setText(self.name_label[self.prediction_class])
         self.prediction_class_label.setAlignment(Qt.AlignCenter)
-        
+            
         
 
 

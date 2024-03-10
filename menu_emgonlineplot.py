@@ -72,6 +72,15 @@ class PlotOnlineEMG(QWidget):
         self.order_lpf = order
         self.low_cut_lpf = low_cut_lpf
         self.initial_lpf(self.order_lpf,self.low_cut_lpf)
+    
+    def finish_delsys(self):
+        print('before closed')
+        self.timer.stop()
+        self.dh.stop_delsys()
+        # self.close()
+        # event.accept()
+        print('after close')
+        self.close()
 
 
     def getEMG(self):
@@ -151,6 +160,10 @@ class WindowPlotOnlineEMG(QWidget):
         self.plotEMG = PlotOnlineEMG(self.ch,self)
         self.initUI()
 
+    def backbutton_event(self):
+        self.plotEMG.finish_delsys()
+
+
     # def set_parameter(self,number_electrode):
     #     # self.plotEMG = PlotOnlineEMG(number_electrode,self)
     #     self.initUI()
@@ -193,6 +206,7 @@ class WindowPlotOnlineEMG(QWidget):
         self.button_lpfreflected.clicked.connect(self.updatelabel_lpfreflected)
         self.button_back.clicked.connect(self.close)
         self.button_adaptation.clicked.connect(self.updatelabel_lpfinfo)
+        # self.button_back.clicked.connect(self.backbutton_event)
       
         self.text_order.hide()
         self.text_passband.hide()

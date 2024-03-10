@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtGui import QPainter, QColor, QBrush
 from PyQt5.QtCore import Qt, QTimer
 import random
-from src.delsys2 import DataHandle
+from src.delsys import DataHandle
 import configparser
 import pandas as pd
 
@@ -25,14 +25,15 @@ import pandas as pd
 
 class RaderChartMixUpWindow(QWidget):
 
-    def __init__(self,ch,parent=None):
+    def __init__(self,dh,ch,parent=None):
         super().__init__(parent)
+        self.dh = dh
         self.radius = 400
         self.number = ch
         self.maximum_emg = np.loadtxt('./max_emg_data/max_data.csv',delimiter=',').tolist()
         self.rcData = [0 for i in range(self.number)] 
-        self.dh = DataHandle(self.number)
-        self.dh.initialize_delsys()
+        # self.dh = DataHandle(self.number)
+        # self.dh.initialize_delsys()
         # self.initUI()
 
         self.timer = QTimer(self)
@@ -51,13 +52,23 @@ class RaderChartMixUpWindow(QWidget):
         # rawRMG = self.dh.get_emg(mode='notch->rect->lpf')
         # self.rcData = np.mean(rawRMG,axis=0)*self.radius/self.maximum_emg
         '''EMGdataを整流平滑化するプログラムを下記に記載する'''
-        rectifiedEMG = self.dh.get_emg(mode='notch->rect->lpf')
+        rectifiedEMG = self.dh.get_emg(mode='notchlpf')
         pd.DataFrame(rectifiedEMG).to_csv(f'rectifiedEMG.csv', mode='a', index = False, header=False)
 
         """シミュレーション実験"""
         self.rcData =  np.mean(rectifiedEMG,axis=0)*self.radius/self.maximum_emg
         # print(f'rectifiedEMG : {self.rcData}')
         self.update()
+
+    def finish_delsys(self):
+        print('before closed')
+        self.timer.stop()
+        self.dh.stop_delsys()
+        # self.close()
+        # event.accept()
+        print('after close')
+        self.close()
+
 
 
     def get_motion1(self):
@@ -163,8 +174,13 @@ class Mixupshow(QWidget):
         # self.initUI()
 
     def start(self):
-        self.chart_widget = RaderChartMixUpWindow(self.ch,self)
+        dh = DataHandle(self.ch)
+        dh.initialize_delsys()
+        self.chart_widget = RaderChartMixUpWindow(dh,self.ch,self)
         self.initUI()
+    
+    def backbutton_event(self):
+        self.chart_widget.finish_delsys()
         
     def initUI(self):
         self.setGeometry(0,0,1920,1080)
