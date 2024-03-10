@@ -69,7 +69,7 @@ class Sequential_Experiment_reader(QWidget):
         # self.setCentralWidget(self.central_widget)
         # self.reader_chart.setGeometry(100, 100, 200, 25)
 
-        self.reader_chart = RaderChartWindow(self.ch,self)
+        self.reader_chart = RaderChartWindow(self.dh,self.ch,self)
         self.progress = Progress(self.sec_mes,self.sec_class_break,self)
         image_path = [f'./images/motion{c+1}' for c in range(self.class_n)]
         self.image = ImageSlider(image_path,self)

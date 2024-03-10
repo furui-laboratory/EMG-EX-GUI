@@ -14,6 +14,7 @@ from src.delsys import DataHandle
 import numpy as np
 import os
 import shutil
+import configparser
 
 
 
@@ -22,25 +23,28 @@ class LearningWindow(QWidget):
     """メインウィンドウ"""
     def __init__(self,ch,parent=None):
         super().__init__(parent)
-        shutil.rmtree('./train_data/')
-        os.mkdir('./train_data')
-        self.ch = ch
+        shutil.rmtree('./classification/train_data/')
+        os.mkdir('./classification/train_data')
+        
+        config = configparser.ConfigParser()
+        config.read('setting.ini')
+        self.ch = config['settings'].getint('ch')
         # 試行数とクラス数の数値を定義
         self.trial_n = 1
         self.class_n = 3
-        self.sec_mes = 7
-        self.sec_class_break = 5
-        # self.dh = DataHandle(self.ch)
-        # self.dh.initialize_delsys()
+        self.sec_mes = config['settings'].getint('sec_mes')
+        self.sec_class_break = config['settings'].getint('sec_class_break')
+        self.dh = DataHandle(self.ch)
+        self.dh.initialize_delsys()
         # ラベルの初期化
         self.trial_ = 0
         self.class_ = 0
         # 現在の試行数とクラス数を求めるための変数
         self.tmp = 0
-        self.image_path = [".\images\motion1.png", ".\images\motion2.png",".\images\motion3.png"]   
-        # self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
-        # self.initUI()
-        # self.reader_chart.hide()
+        self.image_path = [".\classification\images\motion1.png", ".\classification\images\motion2.png",".\classification\images\motion3.png"]
+        self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
+        self.initUI()
+        self.reader_chart.hide()
         self.EMGsinal_object.timer.start()
         # 初期はBreakからスタートする
         self.EMGsinal_object.tick.connect(self.progress.handleTimer)
@@ -60,18 +64,18 @@ class LearningWindow(QWidget):
         # 全ての試行が終了したとき
         self.EMGsinal_object.finished_all_trial.connect(self.learning)
     
-    def start(self):
-        self.dh = DataHandle(self.ch)
-        self.dh.initialize_delsys()
-        self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
-        self.initUI()
+    # def start(self):
+    #     self.dh = DataHandle(self.ch)
+    #     self.dh.initialize_delsys()
+    #     self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
+    #     self.initUI()
 
     def initUI(self):
         self.setWindowTitle("計測中")
         self.setGeometry(0,0,1920,1080)        
 
 
-        self.reader_chart = RaderChartWindow(self.ch,self)
+        self.reader_chart = RaderChartWindow(self.dh,self.ch,self)
         self.progress = Progress(self.sec_mes,self.sec_class_break,self)
         # 参照する画像を渡せるようにする
         self.image = ImageSlider(self.image_path,self)
@@ -98,14 +102,13 @@ class LearningWindow(QWidget):
         event.accept()
         
     def save_emg(self,rawEMG):
-        pd.DataFrame(rawEMG).to_csv(f'./train_data/trial{self.trial_}class{self.class_}.csv', mode='r', index = False, header=False)
+        pd.DataFrame(rawEMG).to_csv(f'./classification/train_data/trial{self.trial_}class{self.class_}.csv', mode='a', index = False, header=False)
     
     def update_label(self,flag):
         if flag:
             self.class_ = ((self.tmp) % (self.class_n)) + 1
             self.trial_ = 1 + (self.tmp//self.class_n)
             self.tmp += 1
-            
 
             print(f'trial{self.trial_}')
 
@@ -144,15 +147,17 @@ class LearningWindow(QWidget):
         sigma = np.empty((self.class_n,self.ch,self.ch))
         # データの読み込み
         for c in range(self.class_n):
-            data = np.loadtxt(f'./train_data/trial1class{c+1}.csv',header=None)
+            data = np.loadtxt(f'./classification/train_data/trial1class{c+1}.csv',delimiter=',')
             # 生波形を整流平滑化する
             rectifiedEMG = self.dh._get_notched_rectified_lpf_emg(data)
             mu[c] = np.mean(rectifiedEMG,axis=0)
-            sigma[c] = np.cov(rectifiedEMG,rowvar=False)*len(rectifiedEMG)
+            mu[c] = np.sum(rectifiedEMG,axis=0).T/len(rectifiedEMG)
+            centered_X = rectifiedEMG - mu[c]
+            sigma[c] = np.dot(centered_X.T,centered_X)
 
-        sigma_pool = np.mean(sigma,axis=0)
-        np.savetxt('./parameter/mu.csv',mu,delimiter=',')
-        np.savetxt('./parameter/sigma.csv',sigma_pool,delimiter=',')
+        sigma_pool = np.sum(sigma,axis=0) / (len(rectifiedEMG)-1)
+        np.savetxt('./classification/parameter/mu.csv',mu,delimiter=',')
+        np.savetxt('./classification/parameter/sigma.csv',sigma_pool,delimiter=',')
         print('Done')
         self.close()
 

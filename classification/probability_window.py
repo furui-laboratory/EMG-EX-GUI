@@ -35,9 +35,9 @@ class ProbabilityWindow(QWidget):
         # adding bargraph item to the window 
         self.win.addItem(self.bargraph) 
 
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.update)
-        self.timer.start(10)
+        # self.timer = QtCore.QTimer()
+        # self.timer.timeout.connect(self.update)
+        # self.timer.start(10)
 
     def update(self,prb):
         # rng = np.random.default_rng()

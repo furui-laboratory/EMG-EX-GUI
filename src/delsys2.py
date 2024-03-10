@@ -68,6 +68,8 @@ class DataHandle:
         """Stop for Delsys Trigno system.
         """
         self.dev.stop()
+        self.dev.__del__()
+
 
     def get_emg(self, mode='notch->rect->lpf'):
         """Get EMG signals.

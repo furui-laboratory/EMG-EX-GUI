@@ -13,41 +13,50 @@ from progress import Progress
 from picture import ImageSlider
 from src.delsys2 import DataHandle
 from reader_chart import RaderChartWindow
-from probability_window import ProbabilityWindow
+from classification.probability_window import ProbabilityWindow
 
 
 
 class PredictionWindow(QWidget):
     def __init__(self,ch,class_n,parent=None):
         super().__init__(parent)
-        self.m = np.loadtxt('./parameter/mu.csv')
-        self.sigma = np.loadtxt('./parameter/sigma.csv')
+        self.m = np.loadtxt('./classification/parameter/mu.csv',delimiter=',')
+        self.sigma = np.loadtxt('./classification/parameter/sigma.csv',delimiter=',')
         self.ch = ch
         self.class_n = class_n
         self.name_label = ['グー','チョキ','パー']
         self.prediction_class_label = QLabel(self)
-        self.reader_chart = RaderChartWindow(self.class_n,self)
-        self.bar_graph = ProbabilityWindow(self.class_n,self)
         # delsys初期化
         self.dh = DataHandle(self.ch)
         self.dh.initialize_delsys()
-        self.initUI()
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.getEMG)
-        self.timer.start(1) 
+        self.timer.start(1)
+        self.reader_chart = RaderChartWindow(self.dh,self.class_n,self)
+        self.bar_graph = ProbabilityWindow(self)
+        self.initUI()
+    
         
     
     def initUI(self):
         self.setGeometry(0,0,1920,1080)
-        self.reader_chart.setGeometry(780, 10, 900, 900)
-        self.bar_graph.setGeometry(350, 10, 900, 900)
+        self.prediction_class_label.setGeometry(1000, 100, 500, 100)
+        self.reader_chart.setGeometry(10, 100, 900, 900)
+        self.bar_graph.setGeometry(1000, 200, 800, 700)
+
+        font_label = QFont()
+        font_label.setPointSize(50)
+        self.prediction_class_label.setFont(font_label)
+
 
     
-    def closeEvent(self, event):
+    def closed(self, event):
         # ウィンドウが閉じられたときにシグナルを送信
         self.dh.stop_delsys()
+        # self.close()
         self.closed.emit()
         event.accept()
+        self.close()
   
 
     def getEMG(self):
@@ -56,11 +65,12 @@ class PredictionWindow(QWidget):
         # レーダーチャートをアップデート
         self.reader_chart.updatePaintEvent(rectifiedEMG)
         # 予測確率と予測クラスを取得
-        prb = self.prediction(rectifiedEMG)
+        prb_value = self.prediction(rectifiedEMG)
         # 棒グラフをアップデート
-        self.bar_graph.update(prb)
+        self.bar_graph.update(prb=prb_value)
         # 予測クラスを取得
-        self.prediction_class=statistics.mode(np.argmax(prb,axis=1))
+        self.prediction_class=statistics.mode(np.argmax(prb_value,axis=1))
+        # print(self.prediction_class)
         # 予測ラベルを更新する
         self.prediction_class_label.setText(self.name_label[self.prediction_class])
         self.prediction_class_label.setAlignment(Qt.AlignCenter)

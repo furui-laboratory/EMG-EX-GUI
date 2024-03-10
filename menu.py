@@ -16,6 +16,8 @@ from getemg_setting import GetEMGSetting
 from raderchart_mixup import Mixupshow
 from menu_emgonlineplot import WindowPlotOnlineEMG
 from get_max_emg import GetMaxEMG
+from classification.classification_menu import Classification_Menu
+
 class Menu(QWidget):
 
     """メインウィンドウ"""
@@ -27,6 +29,7 @@ class Menu(QWidget):
         self.button_emgmax = QPushButton('最大値EMG取得',self)
         self.button_readerchart = QPushButton('レーダーチャート',self)
         self.button_get_emg = QPushButton('EMG取得',self)
+        self.button_demo = QPushButton('機械学習デモ',self)
 
         self.initUI()
 
@@ -37,6 +40,7 @@ class Menu(QWidget):
         self.rader_chartwindow = Mixupshow()
         self.plot_window = WindowPlotOnlineEMG()
         self.savemaxemgWindow = GetMaxEMG()
+        self.classification_menu = Classification_Menu()
 
         
 
@@ -60,6 +64,10 @@ class Menu(QWidget):
         # 最大値EMG取得ボタンが押された時の処理
         self.button_emgmax.clicked.connect(self.hidewindow_emgmax)
         self.savemaxemgWindow.back_button.clicked.connect(self.showwindow_emgmax)
+
+        # 機械学習デモボタンが押された時の処理
+        self.button_demo.clicked.connect(self.hidewindow_classification)
+        self.classification_menu.button_back.clicked.connect(self.showwindow_classification)
 
 
     def hidewindow_plot_emg(self):
@@ -94,6 +102,10 @@ class Menu(QWidget):
         self.savemaxemgWindow.show()
         self.hide()
 
+    def hidewindow_classification(self):
+        self.classification_menu.show()
+        self.hide()
+
     def showwindow_setting(self):
         self.show()
         # ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break = self.settingWindow.send_data()
@@ -117,6 +129,10 @@ class Menu(QWidget):
         self.show()
         self.savemaxemgWindow.close()
 
+    def showwindow_classification(self):
+        self.show()
+        self.classification_menu.close()
+
        
     def initUI(self):
         self.setWindowTitle("menu")
@@ -130,13 +146,15 @@ class Menu(QWidget):
         self.button_emgmax.setFont(font)
         self.button_readerchart.setFont(font)
         self.button_get_emg.setFont(font)
+        self.button_demo.setFont(font)
 
 
-        self.button_setting.setGeometry(710,200,500,100)
-        self.button_online_emgplot.setGeometry(710,350,500,100)
-        self.button_emgmax.setGeometry(710,500,500,100)
-        self.button_readerchart.setGeometry(710,650,500,100)
-        self.button_get_emg.setGeometry(710,800,500,100)
+        self.button_setting.setGeometry(710,100,500,100)
+        self.button_online_emgplot.setGeometry(710,250,500,100)
+        self.button_emgmax.setGeometry(710,400,500,100)
+        self.button_readerchart.setGeometry(710,550,500,100)
+        self.button_get_emg.setGeometry(710,700,500,100)
+        self.button_demo.setGeometry(710,850,500,100)
 
         # self.setLayout(vertical_layout)
         

@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
@@ -13,8 +15,9 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtGui import QPainter, QColor, QBrush
 from PyQt5.QtCore import Qt, QTimer
 import random
-from src.delsys import DataHandle
+from src.delsys2 import DataHandle
 from scipy import signal
+import pandas as pd
 # from src.delsys2 import DataHandle
 # from get_emg_max import GetMaxEmg
 
@@ -22,11 +25,13 @@ from scipy import signal
 class RaderChartWindow(QWidget):
 
     # def __init__(self,dh,number_electrode,maxemg):
-    def __init__(self,ch_num,parent=None):
+    def __init__(self,dh,ch_num,parent=None):
         super().__init__(parent)
         self.radius = 400
+        self.dh = dh
         '''仮で最大値を1としているが、実際は最大値を取得するプログラムを下記に記載する'''
         self.maximum_emg = np.loadtxt('./max_emg_data/max_data.csv',delimiter=',').tolist()
+        print(self.maximum_emg)
         # self.maximum_emg = [0.0001 for i in range(ch_num)]
         self.number = ch_num
         self.rcData = [0 for i in range(self.number)] 
@@ -46,8 +51,10 @@ class RaderChartWindow(QWidget):
         # rawRMG = self.dh.get_emg(mode='notch->rect->lpf')
         # self.rcData = np.mean(rawRMG,axis=0)*self.radius/self.maximum_emg
         '''EMGdataを整流平滑化するプログラムを下記に記載する'''
-        proceed = DataHandle(n_channels=self.number)
-        rectifiedEMG = proceed._get_notched_rectified_lpf_emg(rawEMG)
+        rectifiedEMG = self.dh._get_notched_rectified_lpf_emg(rawEMG)
+        # rectifiedEMG = proceed._get_notched_rectified_lpf_emg(rawEMG)
+        # np.savetxt('rectifiedEMG.csv',rawEMG,delimiter=',')
+        # pd.DataFrame(rectifiedEMG).to_csv(f'rectifiedEMG.csv', mode='a', index = False, header=False)
         """シミュレーション実験"""
         self.rcData =  np.mean(rectifiedEMG,axis=0)*self.radius/self.maximum_emg
         # print(f'rectifiedEMG : {self.rcData}')
@@ -71,7 +78,6 @@ class RaderChartWindow(QWidget):
     #     self.motion1_data = None
     #     self.motion2_data = None
     #     self.combined_data = None
-
 
 
     def paintEvent(self, event):

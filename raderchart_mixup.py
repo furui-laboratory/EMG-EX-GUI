@@ -15,6 +15,7 @@ from PyQt5.QtCore import Qt, QTimer
 import random
 from src.delsys2 import DataHandle
 import configparser
+import pandas as pd
 
 
 # Screen size (pixels)
@@ -51,6 +52,8 @@ class RaderChartMixUpWindow(QWidget):
         # self.rcData = np.mean(rawRMG,axis=0)*self.radius/self.maximum_emg
         '''EMGdataを整流平滑化するプログラムを下記に記載する'''
         rectifiedEMG = self.dh.get_emg(mode='notch->rect->lpf')
+        pd.DataFrame(rectifiedEMG).to_csv(f'rectifiedEMG.csv', mode='a', index = False, header=False)
+
         """シミュレーション実験"""
         self.rcData =  np.mean(rectifiedEMG,axis=0)*self.radius/self.maximum_emg
         # print(f'rectifiedEMG : {self.rcData}')
