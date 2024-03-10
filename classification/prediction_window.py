@@ -25,6 +25,9 @@ class PredictionWindow(QWidget):
         self.ch = ch
         self.class_n = class_n
         self.name_label = ['グー','チョキ','パー']
+        self.label_gu = QLabel('グー',self)
+        self.label_choki = QLabel('チョキ',self)
+        self.label_pa = QLabel('パー',self)
         self.prediction_class_label = QLabel(self)
         # delsys初期化
         self.dh = DataHandle(self.ch)
@@ -40,13 +43,20 @@ class PredictionWindow(QWidget):
     
     def initUI(self):
         self.setGeometry(0,0,1920,1080)
-        self.prediction_class_label.setGeometry(1000, 100, 500, 100)
+        self.prediction_class_label.setGeometry(1180, 80, 500, 100)
         self.reader_chart.setGeometry(10, 100, 900, 900)
-        self.bar_graph.setGeometry(1000, 200, 800, 700)
+        self.bar_graph.setGeometry(1050, 200, 800, 700)
+        self.label_gu.setGeometry(970, 250, 100, 100)
+        self.label_choki.setGeometry(970, 490, 100, 100)
+        self.label_pa.setGeometry(970, 720, 100, 100)
 
         font_label = QFont()
         font_label.setPointSize(50)
         self.prediction_class_label.setFont(font_label)
+        font_label.setPointSize(20)
+        self.label_gu.setFont(font_label)
+        self.label_choki.setFont(font_label)
+        self.label_pa.setFont(font_label)
 
 
     

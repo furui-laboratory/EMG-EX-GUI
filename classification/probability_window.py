@@ -28,7 +28,9 @@ class ProbabilityWindow(QWidget):
         # with bar colors = green 
         self.prb = [0, 0, 0]
         y = [1, 2, 3]
-        self.bargraph = pg.BarGraphItem(x0=0, y=y, height=0.6, width=self.prb)
+        pg.ViewBox.setXRange(self.win,0,1)
+        self.bargraph = pg.BarGraphItem(x0=0, y=y, height=0.6, width=self.prb, brush='b')
+       
         # self.bargraph = pg.BarGraphItem(x = self.x, height = self.prb, width = 0.6, brush ='g') 
 
         # add item to plot window 
