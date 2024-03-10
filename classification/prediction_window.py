@@ -8,12 +8,11 @@ from PyQt5.QtGui import QFont
 import pandas as pd
 import numpy as np
 import statistics
-from EMGsignal_simulation import EMGsignalSimulation
-from reader_chart import RaderChartWindow
+from EMGsignal import EMGsignal
 from progress import Progress
 from picture import ImageSlider
 from src.delsys2 import DataHandle
-from ..reader_chart import RaderChartWindow
+from reader_chart import RaderChartWindow
 from probability_window import ProbabilityWindow
 
 
@@ -40,7 +39,15 @@ class PredictionWindow(QWidget):
     
     def initUI(self):
         self.setGeometry(0,0,1920,1080)
-        
+        self.reader_chart.setGeometry(780, 10, 900, 900)
+        self.bar_graph.setGeometry(350, 10, 900, 900)
+
+    
+    def closeEvent(self, event):
+        # ウィンドウが閉じられたときにシグナルを送信
+        self.dh.stop_delsys()
+        self.closed.emit()
+        event.accept()
   
 
     def getEMG(self):

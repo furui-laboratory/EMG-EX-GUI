@@ -12,13 +12,16 @@ from picture import ImageSlider
 from src.delsys import DataHandle
 import pandas as pd
 from plot_emg import PlotWindow
+import shutil
+import os
 
 class Sequential_Experiment_reader(QWidget):
     closed = pyqtSignal()
     """メインウィンドウ"""
     def __init__(self,ch,class_n,trial_n,sec_mes,sec_class_break,parent=None):
         super().__init__(parent)
-
+        shutil.rmtree('./data/raw/')
+        os.mkdir('./data/raw')
         self.ch = ch
         # 試行数とクラス数の数値を定義
         self.trial_n = trial_n
@@ -67,8 +70,9 @@ class Sequential_Experiment_reader(QWidget):
         # self.reader_chart.setGeometry(100, 100, 200, 25)
 
         self.reader_chart = RaderChartWindow(self.ch,self)
-        self.progress = Progress(7,3,self)
-        self.image = ImageSlider(self)
+        self.progress = Progress(self.sec_mes,self.sec_class_break,self)
+        image_path = [f'./images/motion{c+1}' for c in range(self.class_n)]
+        self.image = ImageSlider(image_path,self)
         # self.plot_emg = PlotWindow(self.ch,self)
         self.Breaking_label = QLabel(self)
         self.Class_label = QLabel(self)

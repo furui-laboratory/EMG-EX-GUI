@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar,QPushButton,QVBoxLayout,QWidget,QSizePolicy,QHBoxLayout,QLabel
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,pyqtSignal
 from PyQt5 import QtTest
 import time
 from EMGsignal import EMGsignal
@@ -12,13 +12,16 @@ from picture import ImageSlider
 from src.delsys import DataHandle
 import pandas as pd
 from plot_emg import PlotWindow
+import shutil
+import os
 
 class Sequential_Experiment_plot(QWidget):
-
+    closed = pyqtSignal()
     """メインウィンドウ"""
     def __init__(self,ch,class_n,trial_n,sec_mes,sec_class_break,parent=None):
         super().__init__(parent)
-
+        shutil.rmtree('./data/raw/')
+        os.mkdir('./data/raw')
         self.ch = ch
         # 試行数とクラス数の数値を定義
         self.trial_n = trial_n
@@ -67,8 +70,9 @@ class Sequential_Experiment_plot(QWidget):
         # self.reader_chart.setGeometry(100, 100, 200, 25)
 
         # self.reader_chart = RaderChartWindow(self.ch,self)
-        self.progress = Progress(7,3,self)
-        self.image = ImageSlider(self)
+        self.progress = Progress(self.sec_mes,self.sec_class_break,self)
+        image_path = [f'./images/motion{c+1}' for c in range(self.class_n)]
+        self.image = ImageSlider(image_path,self)
         self.plot_emg = PlotWindow(self.ch,self)
         self.Breaking_label = QLabel(self)
         self.Class_label = QLabel(self)
@@ -111,6 +115,13 @@ class Sequential_Experiment_plot(QWidget):
     #         self.reader_chart.show()
     #     else:
     #         self.reader_chart.hide()
+        
+    def closeEvent(self, event):
+        # ウィンドウが閉じられたときにシグナルを送信
+        self.EMGsinal_object.timer.stop()
+        self.dh.stop_delsys()
+        self.closed.emit()
+        event.accept()
         
     def save_emg(self,rawEMG):
         pd.DataFrame(rawEMG).to_csv(f'./data/raw/trial{self.trial_}class{self.class_}.csv', mode='a', index = False, header=False)

@@ -15,7 +15,7 @@ from setting import Setting
 from getemg_setting import GetEMGSetting
 from raderchart_mixup import Mixupshow
 from menu_emgonlineplot import WindowPlotOnlineEMG
-
+from get_max_emg import GetMaxEMG
 class Menu(QWidget):
 
     """メインウィンドウ"""
@@ -31,9 +31,14 @@ class Menu(QWidget):
         self.initUI()
 
         self.settingWindow = Setting()
+        self.settingWindow.send_data()
+
         self.saveemg_setting = GetEMGSetting()
         self.rader_chartwindow = Mixupshow()
         self.plot_window = WindowPlotOnlineEMG()
+        self.savemaxemgWindow = GetMaxEMG()
+
+        
 
         # 設定ボタンが押された時の処理
         self.button_setting.clicked.connect(self.hidewindow_setting)
@@ -52,18 +57,23 @@ class Menu(QWidget):
         self.button_online_emgplot.clicked.connect(self.hidewindow_plot_emg)
         self.plot_window.button_back.clicked.connect(self.showwindow_plot_emg)
 
+        # 最大値EMG取得ボタンが押された時の処理
+        self.button_emgmax.clicked.connect(self.hidewindow_emgmax)
+        self.savemaxemgWindow.back_button.clicked.connect(self.showwindow_emgmax)
+
 
     def hidewindow_plot_emg(self):
-        ch,_,_,_,_,_ = self.settingWindow.send_data()
-        self.plot_window.set_parameter(ch)
+        # ch,_,_,_,_,_ = self.settingWindow.send_data()
+        # self.plot_window.set_parameter(ch)
+        self.plot_window.start()
         self.plot_window.show()
         self.hide()
 
     # 取得準備画面を表示
     def hidewindow_getemg(self):
         # 設定画面からデータを取得する
-        ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break = self.settingWindow.send_data()
-        self.saveemg_setting.set_parameter(ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break)
+        # ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break = self.settingWindow.send_data()
+        # self.saveemg_setting.set_parameter(ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break)
         self.saveemg_setting.show()
         self.hide()
 
@@ -73,28 +83,39 @@ class Menu(QWidget):
         self.hide()
 
     def hidewindow_readerchart(self):
-        ch,_,_,_,_,_ = self.settingWindow.send_data()
-        self.rader_chartwindow.set_parameter(ch)
+        # ch,_,_,_,_,_ = self.settingWindow.send_data()
+        # self.rader_chartwindow.set_parameter(ch)
+        self.rader_chartwindow.start()
         self.rader_chartwindow.show()
+        self.hide()
+
+    def hidewindow_emgmax(self):
+        self.savemaxemgWindow.start()
+        self.savemaxemgWindow.show()
         self.hide()
 
     def showwindow_setting(self):
         self.show()
-        ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break = self.settingWindow.send_data()
-        print(ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break)
-        self.settingWindow.hide()
+        # ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break = self.settingWindow.send_data()
+        # self.settingWindow.send_data()
+        # print(ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break)
+        self.settingWindow.close()
     
     def showwindow_getemg(self):
         self.show()
-        self.saveemg_setting.hide()
+        self.saveemg_setting.close()
     
     def showwindow_readerchart(self):
         self.show()
-        self.rader_chartwindow.hide()
+        self.rader_chartwindow.close()
 
     def showwindow_plot_emg(self):
         self.show()
-        self.plot_window.hide()
+        self.plot_window.close()
+    
+    def showwindow_emgmax(self):
+        self.show()
+        self.savemaxemgWindow.close()
 
        
     def initUI(self):
@@ -110,27 +131,6 @@ class Menu(QWidget):
         self.button_readerchart.setFont(font)
         self.button_get_emg.setFont(font)
 
-        # self.button_setting.setFixedSize(500,100)
-        # self.button_online_emgplot.setFixedSize(500,100)
-        # self.button_emgmax.setFixedSize(500,100)
-        # self.button_readerchart.setFixedSize(500,100)
-        # self.button_get_emg.setFixedSize(500,100)
-
-       
-
-        # vertical_layout = QVBoxLayout()
-    
-        # vertical_layout.addWidget(self.button_setting)
-        # vertical_layout.addWidget(self.button_online_emgplot)
-        # vertical_layout.addWidget(self.button_emgmax)
-        # vertical_layout.addWidget(self.button_readerchart)
-        # vertical_layout.addWidget(self.button_get_emg)
-
-        # self.button_setting.setFixedSize(500,100)
-        # self.button_online_emgplot.setFixedSize(500,100)
-        # self.button_emgmax.setFixedSize(500,100)
-        # self.button_readerchart.setFixedSize(500,100)
-        # self.button_get_emg.setFixedSize(500,100)
 
         self.button_setting.setGeometry(710,200,500,100)
         self.button_online_emgplot.setGeometry(710,350,500,100)

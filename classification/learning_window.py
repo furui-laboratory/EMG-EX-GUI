@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt,pyqtSignal
 from PyQt5 import QtTest
 from PyQt5.QtGui import QFont
 import pandas as pd
-from EMGsignal_simulation import EMGsignalSimulation
+from EMGsignal import EMGsignal
 from reader_chart import RaderChartWindow
 from progress import Progress
 from picture import ImageSlider
@@ -30,8 +30,7 @@ class LearningWindow(QWidget):
         self.class_n = 3
         self.sec_mes = 7
         self.sec_class_break = 5
-        self.dh = DataHandle(self.ch)
-        '''simulation'''
+        # self.dh = DataHandle(self.ch)
         # self.dh.initialize_delsys()
         # ラベルの初期化
         self.trial_ = 0
@@ -39,9 +38,8 @@ class LearningWindow(QWidget):
         # 現在の試行数とクラス数を求めるための変数
         self.tmp = 0
         self.image_path = [".\images\motion1.png", ".\images\motion2.png",".\images\motion3.png"]   
-        '''simulation''' 
-        self.EMGsinal_object = EMGsignalSimulation(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
-        self.initUI()
+        # self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
+        # self.initUI()
         # self.reader_chart.hide()
         self.EMGsinal_object.timer.start()
         # 初期はBreakからスタートする
@@ -61,8 +59,13 @@ class LearningWindow(QWidget):
         self.EMGsinal_object.finished_class.connect(self.display_break)
         # 全ての試行が終了したとき
         self.EMGsinal_object.finished_all_trial.connect(self.learning)
-
     
+    def start(self):
+        self.dh = DataHandle(self.ch)
+        self.dh.initialize_delsys()
+        self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
+        self.initUI()
+
     def initUI(self):
         self.setWindowTitle("計測中")
         self.setGeometry(0,0,1920,1080)        
@@ -90,12 +93,12 @@ class LearningWindow(QWidget):
         # ウィンドウが閉じられたときにシグナルを送信
         '''simulation'''
         self.EMGsinal_object.timer.stop()
-        # self.dh.stop_delsys()
+        self.dh.stop_delsys()
         self.closed.emit()
         event.accept()
         
     def save_emg(self,rawEMG):
-        pd.DataFrame(rawEMG).to_csv(f'./train_data/trial{self.trial_}class{self.class_}.csv', mode='w', index = False, header=False)
+        pd.DataFrame(rawEMG).to_csv(f'./train_data/trial{self.trial_}class{self.class_}.csv', mode='r', index = False, header=False)
     
     def update_label(self,flag):
         if flag:
@@ -142,10 +145,12 @@ class LearningWindow(QWidget):
         # データの読み込み
         for c in range(self.class_n):
             data = np.loadtxt(f'./train_data/trial1class{c+1}.csv',header=None)
-            mu[c] = np.mean(data,axis=0)
-            sigma[c] = np.cov(data,rowvar=False)*len(data)
+            # 生波形を整流平滑化する
+            rectifiedEMG = self.dh._get_notched_rectified_lpf_emg(data)
+            mu[c] = np.mean(rectifiedEMG,axis=0)
+            sigma[c] = np.cov(rectifiedEMG,rowvar=False)*len(rectifiedEMG)
 
-        sigma_pool = np.sum(sigma,axis=0) / (len(data) - 1)
+        sigma_pool = np.mean(sigma,axis=0)
         np.savetxt('./parameter/mu.csv',mu,delimiter=',')
         np.savetxt('./parameter/sigma.csv',sigma_pool,delimiter=',')
         print('Done')

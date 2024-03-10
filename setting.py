@@ -13,6 +13,8 @@ from src.delsys import DataHandle
 import pandas as pd
 from plot_emg import PlotWindow
 # from menu import Menu
+import configparser
+
 
 class Setting(QWidget):
 
@@ -50,7 +52,13 @@ class Setting(QWidget):
         sec_mes = int(self.m_time.toPlainText())
         sec_class_break = int(self.rest_class.toPlainText())
         sec_trial_break = int(self.rest_trial.toPlainText())
-        return ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break
+        # データをiniファイルに書き込む
+        config = configparser.ConfigParser()
+        config['settings'] = {'ch': ch, 'class_n': class_n, 'trial_n': trial_n, 'sec_mes': sec_mes, 'sec_class_break': sec_class_break, 'sec_trial_break': sec_trial_break, 'image_path': self.image_path.toPlainText(), 'save_path': self.save_path.toPlainText()}
+        with open('./setting.ini', 'w') as f:
+            config.write(f)
+
+        # return ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break
 
 
 

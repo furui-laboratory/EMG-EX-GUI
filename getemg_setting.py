@@ -15,12 +15,21 @@ from plot_emg import PlotWindow
 from setting import Setting
 from sequential_experiment_reader import Sequential_Experiment_reader
 from sequential_experiment_plot import Sequential_Experiment_plot
+import configparser
 
 class GetEMGSetting(QWidget):
 
     """メインウィンドウ"""
     def __init__(self,parent=None):
         super().__init__(parent)
+        config = configparser.ConfigParser()
+        config.read('./setting.ini')
+        self.ch = config['settings'].getint('ch')
+        self.class_n = config['settings'].getint('class_n')
+        self.trial_n = config['settings'].getint('trial_n')
+        self.sec_mes = config['settings'].getint('sec_mes')
+        self.sec_class_break = config['settings'].getint('sec_class_break')
+        self.sec_trial_break = config['settings'].getint('sec_trial_break')
 
         self.label_get_style = QLabel('取得方法',self)
         self.check_sequential = QCheckBox('全試行連続で取得',self)
@@ -34,13 +43,13 @@ class GetEMGSetting(QWidget):
 
         self.initUI()
 
-    def set_parameter(self,ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break):
-        self.ch = ch
-        self.class_n = class_n
-        self.trial_n = trial_n
-        self.sec_mes = sec_mes
-        self.sec_class_break = sec_class_break
-        self.sec_trial_break = sec_trial_break
+    # def set_parameter(self,ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break):
+    #     self.ch = ch
+    #     self.class_n = class_n
+    #     self.trial_n = trial_n
+    #     self.sec_mes = sec_mes
+    #     self.sec_class_break = sec_class_break
+    #     self.sec_trial_break = sec_trial_break
 
     
     def start(self):

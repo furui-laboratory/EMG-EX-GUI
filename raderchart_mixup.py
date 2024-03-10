@@ -14,6 +14,7 @@ from PyQt5.QtGui import QPainter, QColor, QBrush
 from PyQt5.QtCore import Qt, QTimer
 import random
 from src.delsys2 import DataHandle
+import configparser
 
 
 # Screen size (pixels)
@@ -27,7 +28,7 @@ class RaderChartMixUpWindow(QWidget):
         super().__init__(parent)
         self.radius = 400
         self.number = ch
-        self.maximum_emg = [0.0001 for i in range(self.number)]
+        self.maximum_emg = np.loadtxt('./max_emg_data/max_data.csv',delimiter=',').tolist()
         self.rcData = [0 for i in range(self.number)] 
         self.dh = DataHandle(self.number)
         self.dh.initialize_delsys()
@@ -146,19 +147,22 @@ class RaderChartMixUpWindow(QWidget):
 class Mixupshow(QWidget):
 
     def __init__(self,parent=None):
-        super().__init__(parent)   
+        super().__init__(parent)
+        config = configparser.ConfigParser()
+        config.read('./setting.ini')
+        self.ch = config['settings'].getint('ch')
         self.acquisition_motion1 = QPushButton('Acquisition of motion 1',self)
         self.acquisition_motion2 = QPushButton('Acquisition of motion 2',self)
         self.display_combined_motion = QPushButton('Display combined motion',self)
         self.reset_button = QPushButton('Reset',self)
         self.button_back = QPushButton('Back',self)
-        
+        # self.chart_widget = RaderChartMixUpWindow(self.ch,self)
+        # self.initUI()
 
-    # maxemgを将来的に設定
-    def set_parameter(self,number_electrode):
-        self.chart_widget = RaderChartMixUpWindow(number_electrode,self)
+    def start(self):
+        self.chart_widget = RaderChartMixUpWindow(self.ch,self)
         self.initUI()
-
+        
     def initUI(self):
         self.setGeometry(0,0,1920,1080)
 

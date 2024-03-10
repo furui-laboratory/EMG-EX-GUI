@@ -4,6 +4,7 @@ import numpy as np
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication,QLabel,QWidget,QVBoxLayout,QTextEdit
 import sys
 from src.delsys import DataHandle
+import configparser
 from PyQt5.QtCore import Qt
 from scipy import signal
 
@@ -127,6 +128,11 @@ class WindowPlotOnlineEMG(QWidget):
 
     def __init__(self,parent=None):
         super().__init__(parent)
+
+        config = configparser.ConfigParser()
+        config.read('./setting.ini')
+        self.ch = config['settings'].getint('ch')
+        
         self.label = QLabel('生波形', self)
         self.lable_lpfinfo = QLabel('', self)
         self.button_raw = QPushButton('生波形',self)
@@ -138,11 +144,16 @@ class WindowPlotOnlineEMG(QWidget):
         self.text_order = QTextEdit('2',self)
         self.text_passband = QTextEdit('2',self)  
         self.label.setAlignment(Qt.AlignCenter)
-        
-
-    def set_parameter(self,number_electrode):
-        self.plotEMG = PlotOnlineEMG(number_electrode,self)
+        # self.plotEMG = PlotOnlineEMG(self.ch,self)
+        # self.initUI()
+    
+    def start(self):
+        self.plotEMG = PlotOnlineEMG(self.ch,self)
         self.initUI()
+
+    # def set_parameter(self,number_electrode):
+    #     # self.plotEMG = PlotOnlineEMG(number_electrode,self)
+    #     self.initUI()
 
     def initUI(self):
         self.setGeometry(0,0,1920,1080)
