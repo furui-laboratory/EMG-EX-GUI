@@ -67,7 +67,7 @@ class DataHandle:
     def stop_delsys(self):
         """Stop for Delsys Trigno system.
         """
-        self.dev.stop()
+        # self.dev.stop()
         self.dev.__del__()
         print("Stop.")
 

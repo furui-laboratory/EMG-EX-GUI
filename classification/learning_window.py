@@ -104,6 +104,8 @@ class LearningWindow(QWidget):
     def closeEvent(self, event):
         # ウィンドウが閉じられたときにシグナルを送信
         print('before closed')
+        self.EMGsinal_object.timer.stop()
+        # self.EMGsinal_object.dh.stop_delsys()
         self.dh.stop_delsys()
         # self.close()
         # event.accept()
