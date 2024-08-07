@@ -56,7 +56,7 @@ class PlotWindow(QWidget):
     def update(self,rawEMG):
         for c in range(self.ch):
             self.data = rawEMG[:, c] * 1000
-            self.curve = self.plt[c].plot(pen="y")
+            self.curve = self.plt[c].plot(pen="r")
             self.curves[c].append(self.curve)
             self.curve = self.curves[c][-1]
             self.curve.setData(np.arange(self.time[c], self.time[c] + 40), self.data)

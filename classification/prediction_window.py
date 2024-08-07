@@ -18,12 +18,41 @@ from classification.probability_window import ProbabilityWindow
 
 
 class PredictionWindow(QWidget):
+    closed = pyqtSignal()
     def __init__(self,ch,class_n,parent=None):
         super().__init__(parent)
         self.m = np.loadtxt('./classification/parameter/mu.csv',delimiter=',')
         self.sigma = np.loadtxt('./classification/parameter/sigma.csv',delimiter=',')
         self.ch = ch
         self.class_n = class_n
+        # self.name_label = ['グー','チョキ','パー']
+        # self.label_gu = QLabel('パー',self)
+        # self.label_choki = QLabel('チョキ',self)
+        # self.label_pa = QLabel('グー',self)
+        # self.prediction_class_label = QLabel('予測クラス',self)
+        # # delsys初期化
+        # self.dh = DataHandle(self.ch)
+        # self.dh.initialize_delsys()
+        # self.timer = QTimer(self)
+        # self.timer.timeout.connect(self.getEMG)
+        # self.timer.start(1)
+        # self.reader_chart = RaderChartWindow(self.dh,self.class_n,self)
+        # self.bar_graph = ProbabilityWindow(self)
+        # self.initUI()
+    
+    def closeEvent(self, event):
+        # ウィンドウが閉じられたときにシグナルを送信
+        print('before closed')
+        self.EMGsinal_object.timer.stop()
+        # self.EMGsinal_object.dh.stop_delsys()
+        self.dh.stop_delsys()
+        self.closed.emit()
+        # self.close()
+        # event.accept()
+        print('after close')
+        self.close()
+    
+    def start(self):
         self.name_label = ['グー','チョキ','パー']
         self.label_gu = QLabel('パー',self)
         self.label_choki = QLabel('チョキ',self)
@@ -38,8 +67,6 @@ class PredictionWindow(QWidget):
         self.reader_chart = RaderChartWindow(self.dh,self.class_n,self)
         self.bar_graph = ProbabilityWindow(self)
         self.initUI()
-    
-        
     
     def initUI(self):
         self.setGeometry(0,0,1920,1080)

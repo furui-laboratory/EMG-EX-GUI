@@ -138,9 +138,9 @@ class WindowPlotOnlineEMG(QWidget):
     def __init__(self,parent=None):
         super().__init__(parent)
 
-        config = configparser.ConfigParser()
-        config.read('./setting.ini')
-        self.ch = config['settings'].getint('ch')
+        # config = configparser.ConfigParser()
+        # config.read('./setting.ini')
+        # self.ch = config['settings'].getint('ch')
         
         self.label = QLabel('生波形', self)
         self.lable_lpfinfo = QLabel('', self)
@@ -157,6 +157,9 @@ class WindowPlotOnlineEMG(QWidget):
         # self.initUI()
     
     def start(self):
+        config = configparser.ConfigParser()
+        config.read('./setting.ini')
+        self.ch = config['settings'].getint('ch')
         self.plotEMG = PlotOnlineEMG(self.ch,self)
         self.initUI()
 
