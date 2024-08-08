@@ -46,6 +46,7 @@ class Menu(QWidget):
 
         # 設定ボタンが押された時の処理
         self.button_setting.clicked.connect(self.hidewindow_setting)
+        # 遷移先である設定画面の戻るボタンが押された時の処理
         self.settingWindow.back_button.clicked.connect(self.showwindow_setting)
         
         # 取得ボタンが押された時の処理
@@ -55,18 +56,22 @@ class Menu(QWidget):
 
         # レーダーチャートボタンが押された時の処理
         self.button_readerchart.clicked.connect(self.hidewindow_readerchart)
+        # 遷移先であるレーダーチャートの戻るボタンが押された時の処理
         self.rader_chartwindow.button_back.clicked.connect(self.showwindow_readerchart)
         
         # リアルタイム生波形表示ボタンが押された時の処理
         self.button_online_emgplot.clicked.connect(self.hidewindow_plot_emg)
+        # 遷移先であるリアルタイム生波形表示の戻るボタンが押された時の処理
         self.plot_window.button_back.clicked.connect(self.showwindow_plot_emg)
 
         # 最大値EMG取得ボタンが押された時の処理
         self.button_emgmax.clicked.connect(self.hidewindow_emgmax)
+        # 遷移先である最大値EMG取得の戻るボタンが押された時の処理
         self.savemaxemgWindow.back_button.clicked.connect(self.showwindow_emgmax)
 
         # 機械学習デモボタンが押された時の処理
         self.button_demo.clicked.connect(self.hidewindow_classification)
+        # 遷移先である機械学習デモの戻るボタンが押された時の処理
         self.classification_menu.button_back.clicked.connect(self.showwindow_classification)
 
 
@@ -79,13 +84,10 @@ class Menu(QWidget):
 
     # 取得準備画面を表示
     def hidewindow_getemg(self):
-        # 設定画面からデータを取得する
-        # ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break = self.settingWindow.send_data()
-        # self.saveemg_setting.set_parameter(ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break)
         self.saveemg_setting.show()
         self.hide()
 
-
+    # 現在表示されているメニュー画面を非表示にして、設定画面を表示
     def hidewindow_setting(self):
         self.settingWindow.show()
         self.hide()
@@ -105,12 +107,10 @@ class Menu(QWidget):
     def hidewindow_classification(self):
         self.classification_menu.show()
         self.hide()
-
+    
+    # 設定画面を表示させて、メニュー画面を非表示にする
     def showwindow_setting(self):
         self.show()
-        # ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break = self.settingWindow.send_data()
-        # self.settingWindow.send_data()
-        # print(ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break)
         self.settingWindow.close()
     
     def showwindow_getemg(self):
@@ -119,13 +119,12 @@ class Menu(QWidget):
     
     def showwindow_readerchart(self):
         self.show()
-        self.rader_chartwindow.backbutton_event()
         self.rader_chartwindow.close()
+ 
 
     def showwindow_plot_emg(self):
         self.show()
         # self.plot_window.hide()
-        self.plot_window.backbutton_event()
         self.plot_window.close()
     
     def showwindow_emgmax(self):

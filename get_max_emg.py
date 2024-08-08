@@ -19,18 +19,9 @@ class GetMaxEMG(QWidget):
     def __init__(self,parent=None):
         super().__init__(parent)
 
-        # shutil.rmtree('./max_emg_data/')
-        # os.mkdir('./max_emg_data')
-        config = configparser.ConfigParser()
-        config.read('./setting.ini')
-        self.ch = config['settings'].getint('ch')
         self.back_button = QPushButton('戻る',self)
         self.label_max_emg = QLabel('最大値EMG取得中…',self)
-        # self.dh = DataHandle(self.ch)
-        # self.dh.initialize_delsys()
-        # self.timer = QtCore.QTimer()
-        # self.timer.timeout.connect(self.getEMG)
-        # self.timer.start(1)
+
         self.initUI()
 
         self.back_button.clicked.connect(self.save_max_emg)
@@ -66,6 +57,9 @@ class GetMaxEMG(QWidget):
     def start(self):
         shutil.rmtree('./max_emg_data/')
         os.mkdir('./max_emg_data')
+        config = configparser.ConfigParser()
+        config.read('./setting.ini')
+        self.ch = config['settings'].getint('ch')
         self.dh = DataHandle(self.ch)
         self.dh.initialize_delsys()
         self.timer = QtCore.QTimer()

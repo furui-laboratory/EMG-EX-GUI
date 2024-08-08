@@ -22,7 +22,7 @@ class Setting(QWidget):
     def __init__(self,parent=None):
         super().__init__(parent)
         self.label_electrode_num = QLabel('電極数')
-        self.electrode_num = QTextEdit('3',self)
+        self.electrode_num = QTextEdit('4',self)
         self.label_trial_num = QLabel('試行数')
         self.trial_num = QTextEdit('2',self)
         self.label_class_num = QLabel('動作数')
