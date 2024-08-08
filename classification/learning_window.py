@@ -21,8 +21,50 @@ import configparser
 class LearningWindow(QWidget):
     closed = pyqtSignal()
     """メインウィンドウ"""
-    def __init__(self,ch,parent=None):
+    def __init__(self,parent=None):
         super().__init__(parent)
+        # shutil.rmtree('./classification/train_data/')
+        # os.mkdir('./classification/train_data')
+        
+        # config = configparser.ConfigParser()
+        # config.read('setting.ini')
+        # self.ch = config['settings'].getint('ch')
+        # # 試行数とクラス数の数値を定義
+        # self.trial_n = 1
+        # self.class_n = 3
+        # self.sec_mes = config['settings'].getint('sec_mes')
+        # self.sec_class_break = config['settings'].getint('sec_class_break')
+        # self.dh = DataHandle(self.ch)
+        # self.dh.initialize_delsys()
+        # # ラベルの初期化
+        # self.trial_ = 0
+        # self.class_ = 0
+        # # 現在の試行数とクラス数を求めるための変数
+        # self.tmp = 0
+        # self.image_path = [".\classification\images\motion1.png", ".\classification\images\motion2.png",".\classification\images\motion3.png"]
+        # self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
+        # self.initUI()
+        # self.reader_chart.hide()
+        # self.EMGsinal_object.timer.start()
+        # # 初期はBreakからスタートする
+        # self.EMGsinal_object.tick.connect(self.progress.handleTimer)
+        # # self.EMGsinal_object.tick.connect(self.view)
+        # # レーダーチャートの更新
+        # self.EMGsinal_object.array_signal.connect(self.reader_chart.updatePaintEvent)
+        # # EMGデータの保存
+        # self.EMGsinal_object.array_signal.connect(self.save_emg)
+        # # プログレスバーの更新
+        # self.EMGsinal_object.finished_class.connect(self.progress.update_display)
+        # # ラベルの更新
+        # self.EMGsinal_object.finished_class.connect(self.update_label)
+        # # 画像の更新
+        # self.EMGsinal_object.finished_class.connect(self.image.next_image)
+        # # Breakの表示
+        # self.EMGsinal_object.finished_class.connect(self.display_break)
+        # # 全ての試行が終了したとき
+        # self.EMGsinal_object.finished_all_trial.connect(self.learning)
+    
+    def start(self):
         shutil.rmtree('./classification/train_data/')
         os.mkdir('./classification/train_data')
         
@@ -64,11 +106,6 @@ class LearningWindow(QWidget):
         # 全ての試行が終了したとき
         self.EMGsinal_object.finished_all_trial.connect(self.learning)
     
-    # def start(self):
-    #     self.dh = DataHandle(self.ch)
-    #     self.dh.initialize_delsys()
-    #     self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
-    #     self.initUI()
 
     def initUI(self):
         self.setWindowTitle("計測中")
@@ -107,6 +144,7 @@ class LearningWindow(QWidget):
         self.EMGsinal_object.timer.stop()
         # self.EMGsinal_object.dh.stop_delsys()
         self.dh.stop_delsys()
+        self.closed.emit()
         # self.close()
         # event.accept()
         print('after close')
@@ -171,7 +209,7 @@ class LearningWindow(QWidget):
         np.savetxt('./classification/parameter/mu.csv',mu,delimiter=',')
         np.savetxt('./classification/parameter/sigma.csv',sigma_pool,delimiter=',')
         print('Done')
-        self.close()
+        self.closeEvent(event=None)   
 
 
 def main():

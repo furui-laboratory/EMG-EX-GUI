@@ -58,6 +58,8 @@ class Sequential_Experiment_plot(QWidget):
         self.EMGsinal_object.finished_class.connect(self.plot_emg.reset)
         # Breakの表示
         self.EMGsinal_object.finished_class.connect(self.display_break)
+        # 全ての試行が終了したとき
+        self.EMGsinal_object.finished_all_trial.connect(self.close)
 
     
     def initUI(self):
@@ -116,12 +118,12 @@ class Sequential_Experiment_plot(QWidget):
     #     else:
     #         self.reader_chart.hide()
         
-    def closeEvent(self, event):
-        # ウィンドウが閉じられたときにシグナルを送信
-        self.EMGsinal_object.timer.stop()
-        self.dh.stop_delsys()
-        self.closed.emit()
-        event.accept()
+    # def closeEvent(self, event=None):
+    #     # ウィンドウが閉じられたときにシグナルを送信
+    #     self.EMGsinal_object.timer.stop()
+    #     self.dh.stop_delsys()
+    #     self.closed.emit()
+    #     event.accept()
         
     def save_emg(self,rawEMG):
         pd.DataFrame(rawEMG).to_csv(f'./data/raw/trial{self.trial_}class{self.class_}.csv', mode='a', index = False, header=False)
@@ -161,7 +163,18 @@ class Sequential_Experiment_plot(QWidget):
            
     
 
-        
+    def closeEvent(self, event):
+        # ウィンドウが閉じられたときにシグナルを送信
+        print('before closed')
+        self.EMGsinal_object.timer.stop()
+        # self.EMGsinal_object.dh.stop_delsys()
+        self.dh.stop_delsys()
+        self.closed.emit()
+        # self.close()
+        event.accept()
+        print('after close')
+        # self.close()
+
 
 
 # def main():

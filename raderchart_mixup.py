@@ -60,15 +60,6 @@ class RaderChartMixUpWindow(QWidget):
         # print(f'rectifiedEMG : {self.rcData}')
         self.update()
 
-    def finish_delsys(self):
-        print('before closed')
-        self.timer.stop()
-        self.dh.stop_delsys()
-        # self.close()
-        # event.accept()
-        print('after close')
-        self.close()
-
 
 
     def get_motion1(self):
@@ -162,9 +153,9 @@ class Mixupshow(QWidget):
 
     def __init__(self,parent=None):
         super().__init__(parent)
-        config = configparser.ConfigParser()
-        config.read('./setting.ini')
-        self.ch = config['settings'].getint('ch')
+        # config = configparser.ConfigParser()
+        # config.read('./setting.ini')
+        # self.ch = config['settings'].getint('ch')
         self.acquisition_motion1 = QPushButton('Acquisition of motion 1',self)
         self.acquisition_motion2 = QPushButton('Acquisition of motion 2',self)
         self.display_combined_motion = QPushButton('Display combined motion',self)
@@ -174,6 +165,9 @@ class Mixupshow(QWidget):
         # self.initUI()
 
     def start(self):
+        config = configparser.ConfigParser()
+        config.read('./setting.ini')
+        self.ch = config['settings'].getint('ch')
         dh = DataHandle(self.ch)
         dh.initialize_delsys()
         self.chart_widget = RaderChartMixUpWindow(dh,self.ch,self)
@@ -206,8 +200,17 @@ class Mixupshow(QWidget):
         self.acquisition_motion2.clicked.connect(self.chart_widget.get_motion2)
         self.display_combined_motion.clicked.connect(self.chart_widget.display_combined_motion)
         self.reset_button.clicked.connect(self.chart_widget.reset)
-        self.button_back.clicked.connect(self.close)
-    
+        # self.button_back.clicked.connect(self.close)
+
+    def closeEvent(self, event):
+        print('before closed')
+        self.chart_widget.timer.stop()
+        self.chart_widget.dh.stop_delsys()
+        self.chart_widget.close()
+        event.accept()
+        print('after close')# ウィンドウが閉じられたときにシグナルを送信
+
+        # self.close()
     # def close(self):
     #     self.hide()
     #     self.chart_widget.timer.stop()

@@ -18,6 +18,7 @@ HEIGHT = 960
 XRANGE = 14000
 YRANGE = 0.5
 
+
 class PlotOnlineEMG(QWidget):
     def __init__(self,ch,parent=None):
         super().__init__(parent)
@@ -65,22 +66,25 @@ class PlotOnlineEMG(QWidget):
         self.initial_lpf(self.order_lpf,self.low_cut_lpf)
         
 
-    def change_state(self):
-        self.state = not self.state
+    def change_state_raw(self):
+        self.state = False
+    
+    def change_state_lpfreflected(self):
+        self.state = True
     
     def update_lpw_parametar(self,order,low_cut_lpf):
         self.order_lpf = order
         self.low_cut_lpf = low_cut_lpf
         self.initial_lpf(self.order_lpf,self.low_cut_lpf)
     
-    def finish_delsys(self):
-        print('before closed')
-        self.timer.stop()
-        self.dh.stop_delsys()
-        # self.close()
-        # event.accept()
-        print('after close')
-        self.close()
+    # def finish_delsys(self):
+    #     print('before closed')
+    #     self.timer.stop()
+    #     self.dh.stop_delsys()
+    #     # self.close()
+    #     # event.accept()
+    #     print('after close')
+    #     self.close()
 
 
     def getEMG(self):
@@ -138,9 +142,9 @@ class WindowPlotOnlineEMG(QWidget):
     def __init__(self,parent=None):
         super().__init__(parent)
 
-        config = configparser.ConfigParser()
-        config.read('./setting.ini')
-        self.ch = config['settings'].getint('ch')
+        # config = configparser.ConfigParser()
+        # config.read('./setting.ini')
+        # self.ch = config['settings'].getint('ch')
         
         self.label = QLabel('生波形', self)
         self.lable_lpfinfo = QLabel('', self)
@@ -157,6 +161,9 @@ class WindowPlotOnlineEMG(QWidget):
         # self.initUI()
     
     def start(self):
+        config = configparser.ConfigParser()
+        config.read('./setting.ini')
+        self.ch = config['settings'].getint('ch')
         self.plotEMG = PlotOnlineEMG(self.ch,self)
         self.initUI()
 
@@ -204,7 +211,6 @@ class WindowPlotOnlineEMG(QWidget):
 
         self.button_raw.clicked.connect(self.updatelabel_raw)
         self.button_lpfreflected.clicked.connect(self.updatelabel_lpfreflected)
-        self.button_back.clicked.connect(self.close)
         self.button_adaptation.clicked.connect(self.updatelabel_lpfinfo)
         # self.button_back.clicked.connect(self.backbutton_event)
       
@@ -216,7 +222,7 @@ class WindowPlotOnlineEMG(QWidget):
         self.button_adaptation.hide()
 
     def updatelabel_raw(self):
-        self.plotEMG.change_state()
+        self.plotEMG.change_state_raw()
         self.label.setText('生波形')
         self.text_order.hide()
         self.text_passband.hide()
@@ -226,7 +232,7 @@ class WindowPlotOnlineEMG(QWidget):
         self.button_adaptation.hide()
 
     def updatelabel_lpfreflected(self):
-        self.plotEMG.change_state()
+        self.plotEMG.change_state_lpfreflected()
         self.button_adaptation.show()
         self.text_order.show()
         self.text_passband.show()
@@ -242,6 +248,13 @@ class WindowPlotOnlineEMG(QWidget):
 
                 self.plotEMG.update_lpw_parametar(int(self.text_order.toPlainText()),int(self.text_passband.toPlainText()))
 
+    def closeEvent(self, event):
+        print('before closed')
+        self.plotEMG.timer.stop()
+        self.plotEMG.dh.stop_delsys()
+        self.plotEMG.close()
+        event.accept()
+        print('after close')
     # def close(self):
     #     self.hide()
     #     self.chart_widget.timer.stop()

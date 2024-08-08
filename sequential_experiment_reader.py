@@ -58,6 +58,9 @@ class Sequential_Experiment_reader(QWidget):
         # self.EMGsinal_object.finished_class.connect(self.plot_emg.reset)
         # Breakの表示
         self.EMGsinal_object.finished_class.connect(self.display_break)
+        # 全ての試行が終了したとき
+        self.EMGsinal_object.finished_all_trial.connect(self.close)
+
 
     
     def initUI(self):
@@ -159,6 +162,18 @@ class Sequential_Experiment_reader(QWidget):
             font.setPointSize(50)
             self.Class_label.setFont(font)
             self.Class_label.setText(f'Class{self.class_}')
+    
+    def closeEvent(self, event):
+        # ウィンドウが閉じられたときにシグナルを送信
+        print('before closed')
+        self.EMGsinal_object.timer.stop()
+        # self.EMGsinal_object.dh.stop_delsys()
+        self.dh.stop_delsys()
+        self.closed.emit()
+        # self.close()
+        event.accept()
+        print('after close')
+        # self.close()
            
     
 

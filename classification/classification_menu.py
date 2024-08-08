@@ -22,6 +22,7 @@ class Classification_Menu(QWidget):
         self.config = configparser.ConfigParser()
         self.config.read('setting.ini')
         self.ch = self.config['settings'].getint('ch')
+        self.learningWindow = LearningWindow()
 
         # self.learningWindow = LearningWindow(self.ch)
         # self.predictionWindow = PredictionWindow(self.ch,3)
@@ -30,6 +31,9 @@ class Classification_Menu(QWidget):
         self.button_learning.clicked.connect(self.show_learning_window)
         # 分類ボタンが押された時の処理
         self.button_prediction.clicked.connect(self.show_prediction_window)
+        # self.button_learning.closed(self.show)
+        # self.learningWindow.closed.connect(self.show)
+
 
         self.initUI()
 
@@ -41,12 +45,21 @@ class Classification_Menu(QWidget):
             # self.predictionbuttonを押せないようにする
         
     def show_learning_window(self):
-        self.learningWindow = LearningWindow(self.ch)
+        # self.hide()
+        self.learningWindow = LearningWindow()
+        # self.learningWindow.show()
+        self.learningWindow.start()
         self.learningWindow.show()
+        # self.learningWindow.show()
+        self.hide()
+        self.learningWindow.closed.connect(self.show)
 
     def show_prediction_window(self):
         self.predictionWindow = PredictionWindow(self.ch,3)
+        self.predictionWindow.start()
         self.predictionWindow.show()
+        self.hide()
+        self.predictionWindow.closed.connect(self.show)
 
     
 
@@ -66,6 +79,8 @@ class Classification_Menu(QWidget):
         self.button_learning.setGeometry(710,300,500,100)
         self.button_prediction.setGeometry(710,500,500,100)
         self.button_back.setGeometry(710,700,500,100)
+
+        # self.learningWindow.closed.connect(self.show)
         
 
 
