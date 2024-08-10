@@ -21,22 +21,41 @@ class Setting(QWidget):
     """メインウィンドウ"""
     def __init__(self,parent=None):
         super().__init__(parent)
+        config = configparser.ConfigParser()
+        config.read('./setting.ini')
+
         self.label_electrode_num = QLabel('電極数')
-        self.electrode_num = QTextEdit('4',self)
+        self.electrode_num = QTextEdit(self)
+        self.electrode_num.setText(config['settings']['ch'])
+
         self.label_trial_num = QLabel('試行数')
-        self.trial_num = QTextEdit('2',self)
+        self.trial_num = QTextEdit(self)
+        self.trial_num.setText(config['settings']['trial_n'])
+
         self.label_class_num = QLabel('動作数')
-        self.class_num = QTextEdit('6',self)
+        self.class_num = QTextEdit(self)
+        self.class_num.setText(config['settings']['class_n'])
+
         self.label_m_time = QLabel('計測時間')
-        self.m_time = QTextEdit('7',self)
+        self.m_time = QTextEdit(self)
+        self.m_time.setText(config['settings']['sec_mes'])
+
         self.label_rest_class = QLabel('クラス間Rest')
-        self.rest_class = QTextEdit('3',self)
+        self.rest_class = QTextEdit(self)
+        self.rest_class.setText(config['settings']['sec_class_break'])
+
         self.label_rest_trial = QLabel('試行間Rest')
-        self.rest_trial = QTextEdit('5',self)
+        self.rest_trial = QTextEdit(self)
+        self.rest_trial.setText(config['settings']['sec_trial_break'])
+
         self.label_image_path = QLabel("画像フォルダのパス",self)
-        self.image_path = QTextEdit('C:\\Users\\furuilab\\Documents\\EMG-EX-GUI\\data\\raw',self)
+        self.image_path = QTextEdit(self)
+        self.image_path.setText(config['settings']['image_path'])
+
         self.label_save_path = QLabel('保存フォルダのパス',self)
-        self.save_path = QTextEdit("C:\\Users\\furuilab\\Documents\\EMG-EX-GUI\\data\\raw",self)
+        self.save_path = QTextEdit(self)
+        self.save_path.setText(config['settings']['save_path'])
+
         self.back_button = QPushButton('戻る',self)
         self.firstlabel = QWidget(self)
         self.firstwidget = QWidget(self)
@@ -44,6 +63,8 @@ class Setting(QWidget):
         self.secondwidget = QWidget(self)
         self.initUI()
         self.back_button.clicked.connect(self.send_data)
+
+        
 
     def send_data(self):
         ch = int(self.electrode_num.toPlainText())

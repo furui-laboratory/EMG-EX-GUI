@@ -48,11 +48,11 @@ class GetMaxEMG(QWidget):
         self.label_max_emg.setAlignment(Qt.AlignCenter)
 
     def save_max_emg(self):
-        self.timer.stop()
-        self.dh.stop_delsys()
+        # self.timer.stop()
+        # self.dh.stop_delsys()
         data = np.loadtxt('./max_emg_data/calibration_data.csv',delimiter=',')
         np.savetxt('./max_emg_data/max_data.csv',np.max(data,axis=0))
-        self.close()
+
 
     def start(self):
         shutil.rmtree('./max_emg_data/')
@@ -65,6 +65,13 @@ class GetMaxEMG(QWidget):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.getEMG)
         self.timer.start(1)
+
+    def closeEvent(self, event):
+        print('before closed')
+        self.timer.stop()
+        self.dh.stop_delsys()
+        event.accept()
+        print('after close')# ウィンドウが閉じられたときにシグナルを送信
 
 
 
