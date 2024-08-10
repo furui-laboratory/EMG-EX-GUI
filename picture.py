@@ -10,7 +10,6 @@ class ImageSlider(QWidget):
 
         # 画像ファイルのパスを適切に設定してください
         self.image_paths = image_path
-        # self.image_paths = [".\images\motion1.png", ".\images\motion2.png"] 
         self.current_index = 0
         self.idx = 0
 
@@ -18,25 +17,15 @@ class ImageSlider(QWidget):
 
     def init_ui(self):
         self.setWindowTitle('Image Slider')
-        # self.setGeometry(100, 100, 400, 300)
 
         self.image_label = QLabel(self)
         self.image_label.move(self.width() // 2, self.height() // 2)
-        # self.image_label.setAlignment(Qt.AlignCenter)
-        # self.image_label.setFixedSize(QSize(500, 900))  # 画像表示領域のサイズを設定
 
         self.load_image()
 
-        # next_button = QPushButton('Next', self)
-        # next_button.clicked.connect(self.next_image)
-
-        # prev_button = QPushButton('Previous', self)
-        # prev_button.clicked.connect(self.previous_image)
 
         layout = QVBoxLayout()
         layout.addWidget(self.image_label)
-        # layout.addWidget(next_button)
-        # layout.addWidget(prev_button)
 
         self.setLayout(layout)
 
@@ -47,7 +36,6 @@ class ImageSlider(QWidget):
 
         image = image_reader.read()
         pixmap = QPixmap.fromImage(image)
-        # scaled_image = image.scaled(QSize(500, 900), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         scaled_image = image.scaled(400, 700, Qt.KeepAspectRatio)
         pixmap = QPixmap.fromImage(scaled_image)
 
@@ -61,11 +49,3 @@ class ImageSlider(QWidget):
         self.idx += 1
     
     
-
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = ImageSlider()
-    window.show()
-    sys.exit(app.exec_())

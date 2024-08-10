@@ -26,8 +26,7 @@ class PlotWindow(QWidget):
         layout.addWidget(self.win)
         
        
-        # self.win.resize(WIDTH, HEIGHT)
-        # self.win.move(0, 0)
+
         self.plt = []
         for c in range(self.ch):
             self.plt.append(self.win.addPlot(rowSpan=1))
@@ -41,12 +40,8 @@ class PlotWindow(QWidget):
         self.CHUNK = 40
         self.RATE = 2000
 
-        # self.dh = DataHandle(self.ch)
-        # self.dh.initialize_delsys()
 
         self.timer = QtCore.QTimer()
-        # self.timer.timeout.connect(self.update)
-        # self.timer.start(0.1)
 
         self.data = np.zeros((self.ch, self.CHUNK))
 
@@ -62,10 +57,7 @@ class PlotWindow(QWidget):
             self.curve.setData(np.arange(self.time[c], self.time[c] + 40), self.data)
             self.time[c] += 40
 
-            # if self.time[c] > 14000:
-            #     self.plt[c].clear()
-            #     self.curves[c] = []
-            #     self.time[c] = 0
+       
     
     def reset(self,flag):
         if flag==False:
@@ -75,13 +67,3 @@ class PlotWindow(QWidget):
                 self.time[c] = 0
 
     
-def main():
-    app = QApplication([])
-
-    window = PlotWindow()  
-    window.show()  
-
-    app.exec_()  
-
-if __name__ == "__main__":
-    main()

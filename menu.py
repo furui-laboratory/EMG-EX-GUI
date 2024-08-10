@@ -76,8 +76,6 @@ class Menu(QWidget):
 
 
     def hidewindow_plot_emg(self):
-        # ch,_,_,_,_,_ = self.settingWindow.send_data()
-        # self.plot_window.set_parameter(ch)
         self.plot_window.start()
         self.plot_window.show()
         self.hide()
@@ -93,8 +91,6 @@ class Menu(QWidget):
         self.hide()
 
     def hidewindow_readerchart(self):
-        # ch,_,_,_,_,_ = self.settingWindow.send_data()
-        # self.rader_chartwindow.set_parameter(ch)
         self.rader_chartwindow.start()
         self.rader_chartwindow.show()
         self.hide()
@@ -124,7 +120,6 @@ class Menu(QWidget):
 
     def showwindow_plot_emg(self):
         self.show()
-        # self.plot_window.hide()
         self.plot_window.close()
     
     def showwindow_emgmax(self):
@@ -158,8 +153,7 @@ class Menu(QWidget):
         self.button_get_emg.setGeometry(710,700,500,100)
         self.button_demo.setGeometry(710,850,500,100)
 
-        # self.setLayout(vertical_layout)
-        
+       
       
 
 def main():

@@ -31,9 +31,7 @@ class PlotOnlineEMG(QWidget):
         self.win.setBackground("#FFFFFF00")     
         layout.addWidget(self.win)
         
-       
-        # self.win.resize(WIDTH, HEIGHT)
-        # self.win.move(0, 0)
+
         self.plt = []
         for c in range(self.ch):
             self.plt.append(self.win.addPlot(rowSpan=1))
@@ -76,15 +74,6 @@ class PlotOnlineEMG(QWidget):
         self.order_lpf = order
         self.low_cut_lpf = low_cut_lpf
         self.initial_lpf(self.order_lpf,self.low_cut_lpf)
-    
-    # def finish_delsys(self):
-    #     print('before closed')
-    #     self.timer.stop()
-    #     self.dh.stop_delsys()
-    #     # self.close()
-    #     # event.accept()
-    #     print('after close')
-    #     self.close()
 
 
     def getEMG(self):
@@ -141,10 +130,6 @@ class WindowPlotOnlineEMG(QWidget):
 
     def __init__(self,parent=None):
         super().__init__(parent)
-
-        # config = configparser.ConfigParser()
-        # config.read('./setting.ini')
-        # self.ch = config['settings'].getint('ch')
         
         self.label = QLabel('生波形', self)
         self.lable_lpfinfo = QLabel('', self)
@@ -157,8 +142,7 @@ class WindowPlotOnlineEMG(QWidget):
         self.text_order = QTextEdit('2',self)
         self.text_passband = QTextEdit('2',self)  
         self.label.setAlignment(Qt.AlignCenter)
-        # self.plotEMG = PlotOnlineEMG(self.ch,self)
-        # self.initUI()
+   
     
     def start(self):
         config = configparser.ConfigParser()
@@ -170,10 +154,6 @@ class WindowPlotOnlineEMG(QWidget):
     def backbutton_event(self):
         self.plotEMG.finish_delsys()
 
-
-    # def set_parameter(self,number_electrode):
-    #     # self.plotEMG = PlotOnlineEMG(number_electrode,self)
-    #     self.initUI()
 
     def initUI(self):
         self.setGeometry(0,0,1920,1080)
@@ -194,7 +174,6 @@ class WindowPlotOnlineEMG(QWidget):
         self.lable_lpfinfo.setFont(font)
         font.setPointSize(40)
         self.label.setFont(font)
-        # layout = QVBoxLayout()
 
        
         self.plotEMG.setGeometry(100,10,900,900)
@@ -212,7 +191,6 @@ class WindowPlotOnlineEMG(QWidget):
         self.button_raw.clicked.connect(self.updatelabel_raw)
         self.button_lpfreflected.clicked.connect(self.updatelabel_lpfreflected)
         self.button_adaptation.clicked.connect(self.updatelabel_lpfinfo)
-        # self.button_back.clicked.connect(self.backbutton_event)
       
         self.text_order.hide()
         self.text_passband.hide()
@@ -255,10 +233,7 @@ class WindowPlotOnlineEMG(QWidget):
         self.plotEMG.close()
         event.accept()
         print('after close')
-    # def close(self):
-    #     self.hide()
-    #     self.chart_widget.timer.stop()
-    #     self.chart_widget.dh.stop_delsys()
+
         
       
 

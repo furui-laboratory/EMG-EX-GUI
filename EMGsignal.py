@@ -4,7 +4,7 @@ import pandas as pd
 import sys
 import numpy as np
 import time
-# from src.delsys import DataHandle
+
 
 class EMGsignal(QObject):
     # カスタムシグナルを定義
@@ -21,15 +21,10 @@ class EMGsignal(QObject):
         self.dh = dh
         self.total_num = self.class_n*self.trial_n
         self.flag = False
-        # self.datahandle = dh
-        # self.datahandle.initialize_delsys()
+        
         self.sec_break = sec_break
         self.sec_mes = sec_mes
-        # print(f'trial : {self.trial_n}')
-        # print(f'class : {self.class_n}')
-        # print(f'sec_mes:{sec_mes}')
-        # print(f'sec_break:{self.sec_break}')
-        # 最初はbreakからスタートする
+        
         self.count = sec_break*2000/40
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.send_data)
@@ -72,32 +67,8 @@ class EMGsignal(QObject):
         
         
         
-        # rng = np.random.default_rng()
-        # rawEMG = rng.random((40, 6)).tolist()
-        # rawEMG = [[i for i in range(6)] for j in range(40)]
         
     
 
     def stop_count(self):
-        # self.datahandle.stop_delsys()
         self.timer.stop()
-
-    # def update_count(self):
-    #     print(self.trial)
-    #     print(self.class_num)
-
-    #     if self.count == 0:
-    #         self.finished.emit()
-    #         return
-
-    #     self.count = self.count -1
-    #     self.tick.emit(self.count)
-    #     """EMG の取得コードを書く"""
-    #     """FlagがTureの場合はデータを保存、そうでない場合は捨てる"""
-    #     rawEMG = self.datahandle.get_emg(mode='notch->rect->lpf')
-
-    #     if self.flag == True:
-    #         pd.DataFrame(rawEMG).to_csv(f'../data/raw/trial{self.trial}class{self.class_num}.csv', mode='a', index = False, header=False)
-    #     else:
-    #         pd.DataFrame(rawEMG).to_csv(f'../data/raw/Breakin{self.class_num}.csv', mode='a', index = False, header=False)
-

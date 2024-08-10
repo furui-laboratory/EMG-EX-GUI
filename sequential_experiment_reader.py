@@ -37,25 +37,19 @@ class Sequential_Experiment_reader(QWidget):
         self.tmp = 0    
         self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
         self.initUI()
-        # self.reader_chart.hide()
         self.EMGsinal_object.timer.start()
         # 初期はBreakからスタートする
         self.EMGsinal_object.tick.connect(self.progress.handleTimer)
-        # self.EMGsinal_object.tick.connect(self.view)
         # レーダーチャートの更新
         self.EMGsinal_object.array_signal.connect(self.reader_chart.updatePaintEvent)
         # EMGデータの保存
         self.EMGsinal_object.array_signal.connect(self.save_emg)
-        # EMGのプロット
-        # self.EMGsinal_object.array_signal.connect(self.plot_emg.update)
         # プログレスバーの更新
         self.EMGsinal_object.finished_class.connect(self.progress.update_display)
         # ラベルの更新
         self.EMGsinal_object.finished_class.connect(self.update_label)
         # 画像の更新
         self.EMGsinal_object.finished_class.connect(self.image.next_image)
-        # EMGプロットのリセット
-        # self.EMGsinal_object.finished_class.connect(self.plot_emg.reset)
         # Breakの表示
         self.EMGsinal_object.finished_class.connect(self.display_break)
         # 全ての試行が終了したとき
@@ -68,30 +62,16 @@ class Sequential_Experiment_reader(QWidget):
         self.setGeometry(0,0,1920,1080)        
       
 
-        # self.central_widget = QWidget(self)
-        # self.setCentralWidget(self.central_widget)
-        # self.reader_chart.setGeometry(100, 100, 200, 25)
 
         self.reader_chart = RaderChartWindow(self.dh,self.ch,self)
         self.progress = Progress(self.sec_mes,self.sec_class_break,self)
         image_path = [f'./images/motion{c+1}' for c in range(self.class_n)]
         self.image = ImageSlider(image_path,self)
-        # self.plot_emg = PlotWindow(self.ch,self)
+   
         self.Breaking_label = QLabel(self)
         self.Class_label = QLabel(self)
         self.display_break(False)
         
-        # self.widget1 = QWidget()
-        # self.layout1 = QHBoxLayout()
-        # self.layout1.addWidget(self.reader_chart,4)
-        # self.layout1.addWidget(self.image,1)
-        # self.widget1.setLayout(self.layout1)
-
-
-        # self.layout = QVBoxLayout(self)
-        # self.layout.addWidget(self.widget1,4)
-        # self.layout.addWidget(self.progress,1)
-        # self.setLayout(self.layout)
        
 
         self.progress.setGeometry(230, 900, 1500, 1000)
@@ -99,26 +79,8 @@ class Sequential_Experiment_reader(QWidget):
         self.Class_label.setGeometry(160, 70, 800, 200)
         self.reader_chart.setGeometry(780, 10, 900, 900)
         self.image.setGeometry(350, 10, 900, 900)
-        # self.plot_emg.setGeometry(850, 0, 900, 900)
-        
-
        
-        # self.layout = QVBoxLayout(self)
-        # self.layout.addWidget(self.reader_chart,4)
-        # self.layout.addWidget(self.progress,1)
-        # self.layout.setAlignment(self.reader_chart, Qt.AlignCenter)
-        # self.layout.setAlignment(self.progress, Qt.AlignCenter)
-    
-        # self.progress.setGeometry(160, 90, 300, 30)
-        # self.progress.move(100, 100)  # 新しい位置
-        #self.progress.resize(500, 500)
-    
-    # def change_widget(self,flag):
-    #     if flag:
-    #         self.reader_chart.show()
-    #     else:
-    #         self.reader_chart.hide()
-        
+
     def closeEvent(self, event):
         # ウィンドウが閉じられたときにシグナルを送信
         self.EMGsinal_object.timer.stop()
@@ -137,12 +99,9 @@ class Sequential_Experiment_reader(QWidget):
 
             print(f'trial{self.trial_}')
 
-    # def view(self,count):
-    #     print(f'count : {count}')
     
     def display_break(self,flag):
         if flag == False:
-            # self.plot_emg.hide()
             self.reader_chart.hide()
             self.Breaking_label.show()
             font_rest = QFont()
@@ -155,7 +114,6 @@ class Sequential_Experiment_reader(QWidget):
             self.Class_label.setText('Next Motion')
             self.Class_label.setAlignment(Qt.AlignCenter)
         else:
-            # self.plot_emg.show()
             self.reader_chart.show()
             self.Breaking_label.hide()
             font = QFont()
@@ -167,26 +125,11 @@ class Sequential_Experiment_reader(QWidget):
         # ウィンドウが閉じられたときにシグナルを送信
         print('before closed')
         self.EMGsinal_object.timer.stop()
-        # self.EMGsinal_object.dh.stop_delsys()
         self.dh.stop_delsys()
         self.closed.emit()
-        # self.close()
         event.accept()
         print('after close')
-        # self.close()
            
     
 
         
-
-
-# def main():
-#     """メイン関数"""
-#     app = QApplication(sys.argv)
-#     mv = MainWindow()
-#     mv.show()
-#     sys.exit(app.exec())
-
-
-# if __name__ == "__main__":
-#     main()

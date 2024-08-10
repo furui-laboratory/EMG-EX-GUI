@@ -41,9 +41,6 @@ class Sequential_Experiment_plot(QWidget):
         self.EMGsinal_object.timer.start()
         # 初期はBreakからスタートする
         self.EMGsinal_object.tick.connect(self.progress.handleTimer)
-        # self.EMGsinal_object.tick.connect(self.view)
-        # レーダーチャートの更新
-        # self.EMGsinal_object.array_signal.connect(self.reader_chart.updatePaintEvent)
         # EMGデータの保存
         self.EMGsinal_object.array_signal.connect(self.save_emg)
         # EMGのプロット
@@ -67,11 +64,6 @@ class Sequential_Experiment_plot(QWidget):
         self.setGeometry(0,0,1920,1080)        
       
 
-        # self.central_widget = QWidget(self)
-        # self.setCentralWidget(self.central_widget)
-        # self.reader_chart.setGeometry(100, 100, 200, 25)
-
-        # self.reader_chart = RaderChartWindow(self.ch,self)
         self.progress = Progress(self.sec_mes,self.sec_class_break,self)
         image_path = [f'./images/motion{c+1}' for c in range(self.class_n)]
         self.image = ImageSlider(image_path,self)
@@ -80,50 +72,15 @@ class Sequential_Experiment_plot(QWidget):
         self.Class_label = QLabel(self)
         self.display_break(False)
         
-        # self.widget1 = QWidget()
-        # self.layout1 = QHBoxLayout()
-        # self.layout1.addWidget(self.reader_chart,4)
-        # self.layout1.addWidget(self.image,1)
-        # self.widget1.setLayout(self.layout1)
 
-
-        # self.layout = QVBoxLayout(self)
-        # self.layout.addWidget(self.widget1,4)
-        # self.layout.addWidget(self.progress,1)
-        # self.setLayout(self.layout)
        
 
         self.progress.setGeometry(230, 900, 1500, 1000)
         self.Breaking_label.setGeometry(950, 300, 900, 300)
         self.Class_label.setGeometry(160, 70, 800, 200)
-        # self.reader_chart.setGeometry(780, 10, 900, 900)
         self.image.setGeometry(350, 10, 900, 900)
         self.plot_emg.setGeometry(850, 0, 900, 900)
         
-
-       
-        # self.layout = QVBoxLayout(self)
-        # self.layout.addWidget(self.reader_chart,4)
-        # self.layout.addWidget(self.progress,1)
-        # self.layout.setAlignment(self.reader_chart, Qt.AlignCenter)
-        # self.layout.setAlignment(self.progress, Qt.AlignCenter)
-    
-        # self.progress.setGeometry(160, 90, 300, 30)
-        # self.progress.move(100, 100)  # 新しい位置
-        #self.progress.resize(500, 500)
-    
-    # def change_widget(self,flag):
-    #     if flag:
-    #         self.reader_chart.show()
-    #     else:
-    #         self.reader_chart.hide()
-        
-    # def closeEvent(self, event=None):
-    #     # ウィンドウが閉じられたときにシグナルを送信
-    #     self.EMGsinal_object.timer.stop()
-    #     self.dh.stop_delsys()
-    #     self.closed.emit()
-    #     event.accept()
         
     def save_emg(self,rawEMG):
         pd.DataFrame(rawEMG).to_csv(f'./data/raw/trial{self.trial_}class{self.class_}.csv', mode='a', index = False, header=False)
@@ -136,9 +93,7 @@ class Sequential_Experiment_plot(QWidget):
 
             print(f'trial{self.trial_}')
 
-    # def view(self,count):
-    #     print(f'count : {count}')
-    
+
     def display_break(self,flag):
         if flag == False:
             self.plot_emg.hide()
@@ -154,7 +109,6 @@ class Sequential_Experiment_plot(QWidget):
             self.Class_label.setAlignment(Qt.AlignCenter)
         else:
             self.plot_emg.show()
-            # self.reader_chart.show()
             self.Breaking_label.hide()
             font = QFont()
             font.setPointSize(50)
@@ -167,23 +121,9 @@ class Sequential_Experiment_plot(QWidget):
         # ウィンドウが閉じられたときにシグナルを送信
         print('before closed')
         self.EMGsinal_object.timer.stop()
-        # self.EMGsinal_object.dh.stop_delsys()
         self.dh.stop_delsys()
         self.closed.emit()
-        # self.close()
         event.accept()
         print('after close')
-        # self.close()
 
 
-
-# def main():
-#     """メイン関数"""
-#     app = QApplication(sys.argv)
-#     mv = MainWindow()
-#     mv.show()
-#     sys.exit(app.exec())
-
-
-# if __name__ == "__main__":
-#     main()

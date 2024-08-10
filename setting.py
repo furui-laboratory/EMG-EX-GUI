@@ -58,7 +58,7 @@ class Setting(QWidget):
         with open('./setting.ini', 'w') as f:
             config.write(f)
 
-        # return ch,class_n,trial_n,sec_mes,sec_class_break,sec_trial_break
+       
 
 
 
@@ -116,8 +116,6 @@ class Setting(QWidget):
         self.back_button.setGeometry(858,830,200,80)
 
   
-
-        # self.electrode_num.setFixedSize(900, 80)
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label_electrode_num.setFont(font)
@@ -140,52 +138,3 @@ class Setting(QWidget):
         
 
 
-
-        # self.image_path = QTextEdit(self)
-        # self.image_path.setFixedSize(1800, 40)
-        # self.image_path.setPlaceholderText("表示する動作画像フォルダのパスを入力")
-        # self.save_path = QTextEdit(self)
-        # self.save_path.setFixedSize(1800, 40)
-
-        # self.save_path.setPlaceholderText("取得データを保存するフォルダのパスを入力")
-
-
-        # self.grid_layout = QGridLayout()
-        # self.grid_layout.addWidget(self.electrode_num, 0, 1)
-        # self.grid_layout.addWidget(self.trial_num, 1, 0)
-        # self.grid_layout.addWidget(self.time, 1, 1)
-        # self.grid_layout.addWidget(self.m_time, 2, 0)
-        # self.grid_layout.addWidget(self.rest_time, 2, 1)
-
-       
-        
-
-
-        # self.vertical_layout = QVBoxLayout()
-        # self.vertical_layout.addWidget(self.image_path,)
-        # self.vertical_layout.addWidget(self.save_path,)
-        # self.vertical_layout.addWidget(self.back)
-
-        # self.image_path.setGeometry(10,10,100,100)
-
-
-    
-
-        # self.main_layout = QVBoxLayout()
-        # self.main_layout.addLayout(self.grid_layout)
-        # self.main_layout.addLayout(self.vertical_layout)
-
-
-        
-      
-
-# def main():
-#     """メイン関数"""
-#     app = QApplication(sys.argv)
-#     mv = Setting()
-#     mv.show()
-#     sys.exit(app.exec())
-
-
-# if __name__ == "__main__":
-#     main()

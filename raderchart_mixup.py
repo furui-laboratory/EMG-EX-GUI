@@ -32,9 +32,6 @@ class RaderChartMixUpWindow(QWidget):
         self.number = ch
         self.maximum_emg = np.loadtxt('./max_emg_data/max_data.csv',delimiter=',').tolist()
         self.rcData = [0 for i in range(self.number)] 
-        # self.dh = DataHandle(self.number)
-        # self.dh.initialize_delsys()
-        # self.initUI()
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.updatePaintEvent)
@@ -42,22 +39,17 @@ class RaderChartMixUpWindow(QWidget):
         self.combined_data = [0 for i in range(self.number)]
 
 
-    # def initUI(self):
-    #     self.setGeometry(0,0,1920,1080)      
 
 
     def updatePaintEvent(self):
         ## PaintEvent内で筋電位信号のデータを取得しself.dataを更新する
-       
-        # rawRMG = self.dh.get_emg(mode='notch->rect->lpf')
-        # self.rcData = np.mean(rawRMG,axis=0)*self.radius/self.maximum_emg
+
         '''EMGdataを整流平滑化するプログラムを下記に記載する'''
         rectifiedEMG = self.dh.get_emg(mode='notchlpf')
         pd.DataFrame(rectifiedEMG).to_csv(f'rectifiedEMG.csv', mode='a', index = False, header=False)
 
         """シミュレーション実験"""
         self.rcData =  np.mean(rectifiedEMG,axis=0)*self.radius/self.maximum_emg
-        # print(f'rectifiedEMG : {self.rcData}')
         self.update()
 
 
@@ -104,7 +96,7 @@ class RaderChartMixUpWindow(QWidget):
         qpoints = [QtCore.QPointF(self.radius * np.cos(2. * np.pi / self.number * i),self.radius * np.sin(2. * np.pi / self.number * i)) for i in range(0, self.number)]
         qpoints_label = [QtCore.QPointF((self.radius+30) * np.cos(2. * np.pi / self.number * i),(self.radius+30) * np.sin(2. * np.pi / self.number * i)) for i in range(0, self.number)]
         
-        # print(qpoints_label)
+
         for i in range(self.number):
             painter.drawText(qpoints_label[i], f'{i+1}')
 
@@ -116,18 +108,10 @@ class RaderChartMixUpWindow(QWidget):
             painter.drawLine(point_zero, v)
 
 
-        # 特徴量の描画
-        # ------------
-        # self.rcData_max = max(self.rcData)
-        # self.rcData_normarized = [val/self.rcData_max for val in self.rcData]
-       
-
         pen.setColor(QtCore.Qt.blue)
         pen.setWidth(5)
         painter.setPen(pen)
 
-        # P = [QtCore.QPointF(self.rcData_normarized[i]*20 * np.cos(2. * np.pi / self.number * i),self.rcData_normarized[i]*20 * np.sin(2. * np.pi / self.number * i)) for i in
-        #           range(0, self.number)]
         P = [QtCore.QPointF(self.rcData[i] * np.cos(2. * np.pi / self.number * i),self.rcData[i] * np.sin(2. * np.pi / self.number * i)) for i in
                   range(0, self.number)]
 
@@ -144,7 +128,6 @@ class RaderChartMixUpWindow(QWidget):
                     range(0, self.number)]
             poly_combined = QtGui.QPolygonF(P_combined)
             painter.drawPolygon(poly_combined)
-            # painter.end()
 
         painter.end()
 
@@ -153,16 +136,12 @@ class Mixupshow(QWidget):
 
     def __init__(self,parent=None):
         super().__init__(parent)
-        # config = configparser.ConfigParser()
-        # config.read('./setting.ini')
-        # self.ch = config['settings'].getint('ch')
         self.acquisition_motion1 = QPushButton('Acquisition of motion 1',self)
         self.acquisition_motion2 = QPushButton('Acquisition of motion 2',self)
         self.display_combined_motion = QPushButton('Display combined motion',self)
         self.reset_button = QPushButton('Reset',self)
         self.button_back = QPushButton('Back',self)
-        # self.chart_widget = RaderChartMixUpWindow(self.ch,self)
-        # self.initUI()
+
 
     def start(self):
         config = configparser.ConfigParser()
@@ -187,7 +166,6 @@ class Mixupshow(QWidget):
         self.reset_button.setFont(font)
         self.button_back.setFont(font)
   
-        # layout = QVBoxLayout()
 
         self.chart_widget.setGeometry(100,10,900,900)
         self.acquisition_motion1.setGeometry(1100,250,600,80)
@@ -200,7 +178,7 @@ class Mixupshow(QWidget):
         self.acquisition_motion2.clicked.connect(self.chart_widget.get_motion2)
         self.display_combined_motion.clicked.connect(self.chart_widget.display_combined_motion)
         self.reset_button.clicked.connect(self.chart_widget.reset)
-        # self.button_back.clicked.connect(self.close)
+
 
     def closeEvent(self, event):
         print('before closed')
@@ -210,24 +188,5 @@ class Mixupshow(QWidget):
         event.accept()
         print('after close')# ウィンドウが閉じられたときにシグナルを送信
 
-        # self.close()
-    # def close(self):
-    #     self.hide()
-    #     self.chart_widget.timer.stop()
-    #     self.chart_widget.dh.stop_delsys()
 
-        
-      
-
-# def main():
-#     """メイン関数"""
-#     app = QApplication(sys.argv)
-#     mv = Mixupshow()
-#     mv.set_parameter(3)
-#     mv.show()
-#     sys.exit(app.exec())
-
-
-# if __name__ == "__main__":
-#     main()        
 
