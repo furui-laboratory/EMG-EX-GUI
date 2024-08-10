@@ -133,7 +133,7 @@ class RaderChartMixUpWindow(QWidget):
 
 
 class Mixupshow(QWidget):
-
+    closed = pyqtSignal()
     def __init__(self,parent=None):
         super().__init__(parent)
         self.acquisition_motion1 = QPushButton('Acquisition of motion 1',self)
@@ -141,6 +141,7 @@ class Mixupshow(QWidget):
         self.display_combined_motion = QPushButton('Display combined motion',self)
         self.reset_button = QPushButton('Reset',self)
         self.button_back = QPushButton('Back',self)
+        self.button_back.clicked.connect(self.close)
 
 
     def start(self):
@@ -151,9 +152,6 @@ class Mixupshow(QWidget):
         dh.initialize_delsys()
         self.chart_widget = RaderChartMixUpWindow(dh,self.ch,self)
         self.initUI()
-    
-    def backbutton_event(self):
-        self.chart_widget.finish_delsys()
         
     def initUI(self):
         self.setGeometry(0,0,1920,1080)
@@ -185,6 +183,7 @@ class Mixupshow(QWidget):
         self.chart_widget.timer.stop()
         self.chart_widget.dh.stop_delsys()
         self.chart_widget.close()
+        self.closed.emit()
         event.accept()
         print('after close')# ウィンドウが閉じられたときにシグナルを送信
 

@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication,QLabel,QWidge
 import sys
 from src.delsys import DataHandle
 import configparser
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from scipy import signal
 
 
@@ -127,7 +127,7 @@ class PlotOnlineEMG(QWidget):
         return self._lpf(rectifiedEMG)
     
 class WindowPlotOnlineEMG(QWidget):
-
+    closed = pyqtSignal()
     def __init__(self,parent=None):
         super().__init__(parent)
         
@@ -142,6 +142,7 @@ class WindowPlotOnlineEMG(QWidget):
         self.text_order = QTextEdit('2',self)
         self.text_passband = QTextEdit('2',self)  
         self.label.setAlignment(Qt.AlignCenter)
+        self.button_back.clicked.connect(self.close)
    
     
     def start(self):
@@ -150,9 +151,6 @@ class WindowPlotOnlineEMG(QWidget):
         self.ch = config['settings'].getint('ch')
         self.plotEMG = PlotOnlineEMG(self.ch,self)
         self.initUI()
-
-    def backbutton_event(self):
-        self.plotEMG.finish_delsys()
 
 
     def initUI(self):
@@ -231,6 +229,7 @@ class WindowPlotOnlineEMG(QWidget):
         self.plotEMG.timer.stop()
         self.plotEMG.dh.stop_delsys()
         self.plotEMG.close()
+        self.closed.emit()
         event.accept()
         print('after close')
 

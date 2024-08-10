@@ -3,7 +3,7 @@ import sys
 sys.path.append('..')
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar,QPushButton,QVBoxLayout,QWidget,QSizePolicy,QHBoxLayout,QLabel
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,pyqtSignal
 from PyQt5 import QtTest
 from PyQt5 import QtGui
 from classification.learning_window import LearningWindow
@@ -12,6 +12,7 @@ import configparser
 
 
 class Classification_Menu(QWidget):
+    closed = pyqtSignal()
     """メインウィンドウ"""
     def __init__(self,parent=None):
         super().__init__(parent)
@@ -23,6 +24,7 @@ class Classification_Menu(QWidget):
         self.config.read('setting.ini')
         self.ch = self.config['settings'].getint('ch')
         self.learningWindow = LearningWindow()
+        self.button_back.clicked.connect(self.close)
 
         # self.learningWindow = LearningWindow(self.ch)
         # self.predictionWindow = PredictionWindow(self.ch,3)
@@ -81,7 +83,13 @@ class Classification_Menu(QWidget):
         self.button_back.setGeometry(710,700,500,100)
 
         # self.learningWindow.closed.connect(self.show)
-        
+    def closeEvent(self, event):
+        print('before closed')
+        self.closed.emit()
+        event.accept()
+        print('after close')# ウィンドウが閉じられたときにシグナルを送信
+
+
 
 
       

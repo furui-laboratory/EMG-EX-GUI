@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar,QPushButton,QVBoxLayout,QWidget,QSizePolicy,QHBoxLayout,QLabel,QCheckBox,QButtonGroup
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5 import QtTest
 from PyQt5 import QtGui
 import time
@@ -22,7 +22,7 @@ import configparser
 '''1試行ごとにEMGデータを取得できるモードを作成する必要がある'''
 
 class GetEMGSetting(QWidget):
-
+    closed = pyqtSignal()
     """メインウィンドウ"""
     def __init__(self,parent=None):
         super().__init__(parent)
@@ -36,6 +36,7 @@ class GetEMGSetting(QWidget):
         self.button_start = QPushButton('計測開始',self)
         self.button_back = QPushButton('戻る',self)
         self.button_start.clicked.connect(self.start)
+        self.button_back.clicked.connect(self.close)
 
         self.initUI()
 
@@ -102,4 +103,8 @@ class GetEMGSetting(QWidget):
         self.button_start.setGeometry(880,700,250,80)
         self.button_back.setGeometry(880,800,250,80)
         
-      
+    def closeEvent(self, event):
+        print('before closed')
+        self.closed.emit()
+        event.accept()
+        print('after close')# ウィンドウが閉じられたときにシグナルを送信

@@ -36,11 +36,11 @@ class Menu(QWidget):
         self.settingWindow = Setting()
         self.settingWindow.send_data()
 
-        self.saveemg_setting = GetEMGSetting()
-        self.rader_chartwindow = Mixupshow()
-        self.plot_window = WindowPlotOnlineEMG()
-        self.savemaxemgWindow = GetMaxEMG()
-        self.classification_menu = Classification_Menu()
+        # self.saveemg_setting = GetEMGSetting()
+        # self.rader_chartwindow = Mixupshow()
+        # self.plot_window = WindowPlotOnlineEMG()
+        # self.savemaxemgWindow = GetMaxEMG()
+        # self.classification_menu = Classification_Menu()
 
         
 
@@ -51,39 +51,43 @@ class Menu(QWidget):
         
         # 取得ボタンが押された時の処理
         self.button_get_emg.clicked.connect(self.hidewindow_getemg)
-        # 遷移先である取得準備画面の戻るボタンが押された時の処理
-        self.saveemg_setting.button_back.clicked.connect(self.showwindow_getemg)
+        # # 遷移先である取得準備画面の戻るボタンが押された時の処理
+        # self.saveemg_setting.button_back.clicked.connect(self.showwindow_getemg)
 
         # レーダーチャートボタンが押された時の処理
         self.button_readerchart.clicked.connect(self.hidewindow_readerchart)
-        # 遷移先であるレーダーチャートの戻るボタンが押された時の処理
-        self.rader_chartwindow.button_back.clicked.connect(self.showwindow_readerchart)
+        # # 遷移先であるレーダーチャートの戻るボタンが押された時の処理
+        # self.rader_chartwindow.button_back.clicked.connect(self.showwindow_readerchart)
         
         # リアルタイム生波形表示ボタンが押された時の処理
         self.button_online_emgplot.clicked.connect(self.hidewindow_plot_emg)
-        # 遷移先であるリアルタイム生波形表示の戻るボタンが押された時の処理
-        self.plot_window.button_back.clicked.connect(self.showwindow_plot_emg)
+        # # 遷移先であるリアルタイム生波形表示の戻るボタンが押された時の処理
+        # self.plot_window.button_back.clicked.connect(self.showwindow_plot_emg)
 
         # 最大値EMG取得ボタンが押された時の処理
         self.button_emgmax.clicked.connect(self.hidewindow_emgmax)
         # 遷移先である最大値EMG取得の戻るボタンが押された時の処理
-        self.savemaxemgWindow.back_button.clicked.connect(self.showwindow_emgmax)
+        # self.savemaxemgWindow.back_button.clicked.connect(self.showwindow_emgmax)
 
         # 機械学習デモボタンが押された時の処理
         self.button_demo.clicked.connect(self.hidewindow_classification)
         # 遷移先である機械学習デモの戻るボタンが押された時の処理
-        self.classification_menu.button_back.clicked.connect(self.showwindow_classification)
+        # self.classification_menu.button_back.clicked.connect(self.showwindow_classification)
 
 
     def hidewindow_plot_emg(self):
+        self.plot_window = WindowPlotOnlineEMG()
         self.plot_window.start()
         self.plot_window.show()
         self.hide()
+        self.plot_window.closed.connect(self.show)
 
     # 取得準備画面を表示
     def hidewindow_getemg(self):
+        self.saveemg_setting = GetEMGSetting()
         self.saveemg_setting.show()
         self.hide()
+        self.saveemg_setting.closed.connect(self.show)
 
     # 現在表示されているメニュー画面を非表示にして、設定画面を表示
     def hidewindow_setting(self):
@@ -91,18 +95,24 @@ class Menu(QWidget):
         self.hide()
 
     def hidewindow_readerchart(self):
+        self.rader_chartwindow = Mixupshow()
         self.rader_chartwindow.start()
         self.rader_chartwindow.show()
         self.hide()
+        self.rader_chartwindow.closed.connect(self.show)
 
     def hidewindow_emgmax(self):
+        self.savemaxemgWindow = GetMaxEMG()
         self.savemaxemgWindow.start()
         self.savemaxemgWindow.show()
         self.hide()
+        self.savemaxemgWindow.closed.connect(self.show)
 
     def hidewindow_classification(self):
+        self.classification_menu = Classification_Menu()
         self.classification_menu.show()
         self.hide()
+        self.classification_menu.closed.connect(self.show)
     
     # 設定画面を表示させて、メニュー画面を非表示にする
     def showwindow_setting(self):
