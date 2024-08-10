@@ -46,7 +46,7 @@ class RaderChartMixUpWindow(QWidget):
 
         '''EMGdataを整流平滑化するプログラムを下記に記載する'''
         rectifiedEMG = self.dh.get_emg(mode='notchlpf')
-        pd.DataFrame(rectifiedEMG).to_csv(f'rectifiedEMG.csv', mode='a', index = False, header=False)
+        # pd.DataFrame(rectifiedEMG).to_csv(f'rectifiedEMG.csv', mode='a', index = False, header=False)
 
         """シミュレーション実験"""
         self.rcData =  np.mean(rectifiedEMG,axis=0)*self.radius/self.maximum_emg
