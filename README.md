@@ -1,4 +1,4 @@
-# SeiEMG Pro
+# sEiMG Khaos Feat.Seitaro
 
 筋電位信号計測プログラムです。
 計測だけではなく、計測時に必要な機能を搭載しています。
