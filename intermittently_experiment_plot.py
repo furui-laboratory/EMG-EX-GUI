@@ -37,13 +37,9 @@ class Intermittently_Experiment_plot(QWidget):
         self.tmp = 0    
         self.EMGsinal_object = EMGsignal(self.dh,self.trial_n,self.class_n,self.sec_class_break,self.sec_mes)
         self.initUI()
-        # self.reader_chart.hide()
         self.EMGsinal_object.timer.start()
         # 初期はBreakからスタートする
         self.EMGsinal_object.tick.connect(self.progress.handleTimer)
-        # self.EMGsinal_object.tick.connect(self.view)
-        # レーダーチャートの更新
-        # self.EMGsinal_object.array_signal.connect(self.reader_chart.updatePaintEvent)
         # EMGデータの保存
         self.EMGsinal_object.array_signal.connect(self.save_emg)
         # EMGのプロット

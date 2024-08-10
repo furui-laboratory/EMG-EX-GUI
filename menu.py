@@ -36,45 +36,27 @@ class Menu(QWidget):
         self.settingWindow = Setting()
         self.settingWindow.send_data()
 
-        # self.saveemg_setting = GetEMGSetting()
-        # self.rader_chartwindow = Mixupshow()
-        # self.plot_window = WindowPlotOnlineEMG()
-        # self.savemaxemgWindow = GetMaxEMG()
-        # self.classification_menu = Classification_Menu()
-
-        
-
         # 設定ボタンが押された時の処理
         self.button_setting.clicked.connect(self.hidewindow_setting)
-        # 遷移先である設定画面の戻るボタンが押された時の処理
+        # 設定画面の戻るボタンが押された時の処理
         self.settingWindow.back_button.clicked.connect(self.showwindow_setting)
-        
+
         # 取得ボタンが押された時の処理
         self.button_get_emg.clicked.connect(self.hidewindow_getemg)
-        # # 遷移先である取得準備画面の戻るボタンが押された時の処理
-        # self.saveemg_setting.button_back.clicked.connect(self.showwindow_getemg)
 
         # レーダーチャートボタンが押された時の処理
         self.button_readerchart.clicked.connect(self.hidewindow_readerchart)
-        # # 遷移先であるレーダーチャートの戻るボタンが押された時の処理
-        # self.rader_chartwindow.button_back.clicked.connect(self.showwindow_readerchart)
-        
+    
         # リアルタイム生波形表示ボタンが押された時の処理
         self.button_online_emgplot.clicked.connect(self.hidewindow_plot_emg)
-        # # 遷移先であるリアルタイム生波形表示の戻るボタンが押された時の処理
-        # self.plot_window.button_back.clicked.connect(self.showwindow_plot_emg)
 
         # 最大値EMG取得ボタンが押された時の処理
         self.button_emgmax.clicked.connect(self.hidewindow_emgmax)
-        # 遷移先である最大値EMG取得の戻るボタンが押された時の処理
-        # self.savemaxemgWindow.back_button.clicked.connect(self.showwindow_emgmax)
 
         # 機械学習デモボタンが押された時の処理
         self.button_demo.clicked.connect(self.hidewindow_classification)
-        # 遷移先である機械学習デモの戻るボタンが押された時の処理
-        # self.classification_menu.button_back.clicked.connect(self.showwindow_classification)
 
-
+    # リアルタイム生波形表示画面を表示
     def hidewindow_plot_emg(self):
         self.plot_window = WindowPlotOnlineEMG()
         self.plot_window.start()
@@ -93,7 +75,12 @@ class Menu(QWidget):
     def hidewindow_setting(self):
         self.settingWindow.show()
         self.hide()
+    # 設定画面を表示させて、メニュー画面を非表示にする
+    def showwindow_setting(self):
+        self.show()
+        self.settingWindow.close()
 
+    # レーダーチャート画面を表示
     def hidewindow_readerchart(self):
         self.rader_chartwindow = Mixupshow()
         self.rader_chartwindow.start()
@@ -101,6 +88,7 @@ class Menu(QWidget):
         self.hide()
         self.rader_chartwindow.closed.connect(self.show)
 
+    # 最大値EMG取得画面を表示
     def hidewindow_emgmax(self):
         self.savemaxemgWindow = GetMaxEMG()
         self.savemaxemgWindow.start()
@@ -108,43 +96,17 @@ class Menu(QWidget):
         self.hide()
         self.savemaxemgWindow.closed.connect(self.show)
 
+    # 機械学習デモ画面を表示
     def hidewindow_classification(self):
         self.classification_menu = Classification_Menu()
         self.classification_menu.show()
         self.hide()
         self.classification_menu.closed.connect(self.show)
     
-    # 設定画面を表示させて、メニュー画面を非表示にする
-    def showwindow_setting(self):
-        self.show()
-        self.settingWindow.close()
-    
-    def showwindow_getemg(self):
-        self.show()
-        self.saveemg_setting.close()
-    
-    def showwindow_readerchart(self):
-        self.show()
-        self.rader_chartwindow.close()
- 
-
-    def showwindow_plot_emg(self):
-        self.show()
-        self.plot_window.close()
-    
-    def showwindow_emgmax(self):
-        self.show()
-        self.savemaxemgWindow.close()
-
-    def showwindow_classification(self):
-        self.show()
-        self.classification_menu.close()
-
-       
+   
     def initUI(self):
         self.setWindowTitle("menu")
         self.setGeometry(0,0,1920,1080)
-
 
         font = QtGui.QFont()
         font.setPointSize(20)
@@ -155,7 +117,6 @@ class Menu(QWidget):
         self.button_get_emg.setFont(font)
         self.button_demo.setFont(font)
 
-
         self.button_setting.setGeometry(710,100,500,100)
         self.button_online_emgplot.setGeometry(710,250,500,100)
         self.button_emgmax.setGeometry(710,400,500,100)
@@ -163,8 +124,6 @@ class Menu(QWidget):
         self.button_get_emg.setGeometry(710,700,500,100)
         self.button_demo.setGeometry(710,850,500,100)
 
-       
-      
 
 def main():
     """メイン関数"""

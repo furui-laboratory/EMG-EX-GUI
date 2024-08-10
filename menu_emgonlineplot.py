@@ -236,17 +236,3 @@ class WindowPlotOnlineEMG(QWidget):
         
       
 
-def main():
-    """メイン関数"""
-    app = QApplication(sys.argv)
-    mv = WindowPlotOnlineEMG()
-    mv.set_parameter(3)
-    mv.show()
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()        
-
-
-

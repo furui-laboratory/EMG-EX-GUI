@@ -40,7 +40,6 @@ class Intermittently_Experiment_reader(QWidget):
         self.EMGsinal_object.timer.start()
         # 初期はBreakからスタートする
         self.EMGsinal_object.tick.connect(self.progress.handleTimer)
-        # self.EMGsinal_object.tick.connect(self.view)
         # レーダーチャートの更新
         self.EMGsinal_object.array_signal.connect(self.reader_chart.updatePaintEvent)
         # EMGデータの保存
@@ -53,8 +52,6 @@ class Intermittently_Experiment_reader(QWidget):
         self.EMGsinal_object.finished_class.connect(self.update_label)
         # 画像の更新
         self.EMGsinal_object.finished_class.connect(self.image.next_image)
-        # EMGプロットのリセット
-        # self.EMGsinal_object.finished_class.connect(self.plot_emg.reset)
         # Breakの表示
         self.EMGsinal_object.finished_class.connect(self.display_break)
         # 全ての試行が終了したとき
