@@ -64,15 +64,18 @@
 ## Getting started
 計測する前に必要な処理の流れを説明する．
 
-1. ターミナルから `menu.py` を実行
+0. furuilabディレクトリに移動して以下のコマンドをターミナル上で実行
+  -  `.\envs\pyqt5\Scripts\activate` 
+
+1. ターミナルから `python menu.py` を実行
   - 以下のようなメニュー画面が表示される
   ![Example Image](explain/menu.png)
-2. メニュー画面から設定ボタンをクリック
+1. メニュー画面から設定ボタンをクリック
   - 設定画面上で電極数，動作数，試行数 ‥ を指定．
   - 戻るボタンを押すと値が保存される  
   - （ `setting.ini` から変更しても可能 ）
   ![Example Image](explain/setting.png)
-3. 最大値EMG取得 **（レーダーチャートを表示させる場合は必須）**
+1. 最大値EMG取得 **（レーダーチャートを表示させる場合は必須）**
   - レーダーチャートに表示させる EMG の値を正規化するため，ユーザから最大値を取得する
   - 以下計測準備画面
   ![Example Image](explain/maxemg_ready.png)
