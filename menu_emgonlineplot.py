@@ -20,41 +20,45 @@ YRANGE = 0.5
 
 
 class PlotOnlineEMG(QWidget):
-    def __init__(self,ch,parent=None):
+    def __init__(self,ch,parent=None,dh=None):
         super().__init__(parent)
         
         self.ch = ch
+        self.dh = dh
         self.order_lpf = 2
         self.low_cut_lpf = 2
         layout = QVBoxLayout(self)
         self.win=pg.GraphicsLayoutWidget(show=True)
         self.win.setBackground("#FFFFFF00")     
         layout.addWidget(self.win)
+
+        pg.setConfigOptions(useOpenGL = True)
+
         
 
         self.plt = []
-        for c in range(self.ch):
-            self.plt.append(self.win.addPlot(rowSpan=1))
-            self.win.nextRow()
+        self.curves = []
+        
 
         for c in range(self.ch):
-            self.plt[c].setXRange(0, XRANGE)
-            self.plt[c].setYRange(-YRANGE,YRANGE)
+            plot=self.win.addPlot(row=c, col=0)
+            plot.setXRange(0, XRANGE)
+            plot.setYRange(-YRANGE,YRANGE)
+            curve = plot.plot(pen=(c * 85, 0, 255 - c * 85))
+            self.plt.append(plot)
+            self.curves.append(curve)
 
 
-        self.CHUNK = 40
+        self.CHUNK = 40 # 40データごとに
         self.RATE = 2000
 
-        self.dh = DataHandle(self.ch)
-        self.dh.initialize_delsys()
+        #self.dh = DataHandle(self.ch)
+        #self.dh.initialize_delsys() # EMG信号の初期化
 
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.getEMG)
-        self.timer.start(1)
+        self.data = np.zeros((self.ch, XRANGE))
+        self.current_column =0
 
-        self.data = np.zeros((self.ch, self.CHUNK))
-
-        self.curves = [[] for i in range(self.ch)]
+        #self.curves = [[] for i in range(self.ch)]
         self.time = np.zeros(self.ch)
 
         # False : 生波形
@@ -62,6 +66,10 @@ class PlotOnlineEMG(QWidget):
         self.state = False
 
         self.initial_lpf(self.order_lpf,self.low_cut_lpf)
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.getEMG)
+        self.timer.start(1)
         
 
     def change_state_raw(self):
@@ -85,18 +93,29 @@ class PlotOnlineEMG(QWidget):
         self.update(processedEMG)
 
     def update(self,rawEMG):
-        for c in range(self.ch):
-            self.data = rawEMG[:, c] * 1000
-            self.curve = self.plt[c].plot(pen={"color": "r", "width": 1})
-            self.curves[c].append(self.curve)
-            self.curve = self.curves[c][-1]
-            self.curve.setData(np.arange(self.time[c], self.time[c] + 40), self.data)
-            self.time[c] += 40
+        newdata = rawEMG.T * 1000
+        if self.current_column + 40 > self.data.shape[1]:
+            self.data = np.roll(self.data, -40, axis=1)
+            self.current_column = self.data.data.shape[1] - 40
+        self.data[:, self.current_column:self.current_column + 40] = newdata
+        self.current_column += 40
 
-            if self.time[c] > 14000:
-                self.plt[c].clear()
-                self.curves[c] = []
-                self.time[c] = 0
+        for c in range(self.ch):
+            #self.data = rawEMG[:, c] * 1000
+            #self.curve = self.plt[c].plot(pen={"color": "r", "width": 1})
+            #self.curves[c].append(self.curve)
+            #self.curve = self.curves[c][-1]
+
+            #self.curve.setData(np.arange(self.time[c], self.time[c] + 40), self.data)
+            if self.current_column >XRANGE:
+                start_col = self.current_column - XRANGE
+                self.curves[c].setData(self.data[c, start_col:self.current_column])
+            else:
+                self.curves[c].setData(self.data[c, :self.current_column])
+                
+            
+
+            
 
     
 
@@ -128,8 +147,9 @@ class PlotOnlineEMG(QWidget):
     
 class WindowPlotOnlineEMG(QWidget):
     closed = pyqtSignal()
-    def __init__(self,parent=None):
+    def __init__(self,dh=None,parent=None):
         super().__init__(parent)
+        self.dh = dh
         
         self.label = QLabel('生波形', self)
         self.lable_lpfinfo = QLabel('', self)
@@ -149,7 +169,7 @@ class WindowPlotOnlineEMG(QWidget):
         config = configparser.ConfigParser()
         config.read('./setting.ini')
         self.ch = config['settings'].getint('ch')
-        self.plotEMG = PlotOnlineEMG(self.ch,self)
+        self.plotEMG = PlotOnlineEMG(self.ch,self, dh=self.dh)
         self.initUI()
 
 
@@ -227,9 +247,12 @@ class WindowPlotOnlineEMG(QWidget):
     def closeEvent(self, event):
         print('before closed')
         self.plotEMG.timer.stop()
-        self.plotEMG.dh.stop_delsys()
-        self.plotEMG.close()
+        #self.plotEMG.dh.stop_delsys()
+        #self.plotEMG.close()
+        
+        # イベントを受け入れてウィンドウを閉じる
         self.closed.emit()
+        self.deleteLater()  # ウィジェットを削除する準備をする
         event.accept()
         print('after close')
 

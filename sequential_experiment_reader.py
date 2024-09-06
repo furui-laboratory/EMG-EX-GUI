@@ -14,22 +14,24 @@ import pandas as pd
 from plot_emg import PlotWindow
 import shutil
 import os
+import configparser
+from datetime import datetime
 
 class Sequential_Experiment_reader(QWidget):
     closed = pyqtSignal()
     """メインウィンドウ"""
-    def __init__(self,ch,class_n,trial_n,sec_mes,sec_class_break,parent=None):
+    def __init__(self,ch,class_n,trial_n,sec_mes,sec_class_break,parent=None,dh=None):
         super().__init__(parent)
-        shutil.rmtree('./data/raw/')
-        os.mkdir('./data/raw')
+        self.file_flag=0
         self.ch = ch
+        self.dh = dh
         # 試行数とクラス数の数値を定義
         self.trial_n = trial_n
         self.class_n = class_n
         self.sec_mes = sec_mes
         self.sec_class_break = sec_class_break
-        self.dh = DataHandle(self.ch)
-        self.dh.initialize_delsys()
+        #self.dh = DataHandle(self.ch)
+        #self.dh.initialize_delsys()
         # ラベルの初期化
         self.trial_ = 0
         self.class_ = 0
@@ -57,6 +59,8 @@ class Sequential_Experiment_reader(QWidget):
 
 
     
+    
+    
     def initUI(self):
         self.setWindowTitle("計測中")
         self.setGeometry(0,0,1920,1080)        
@@ -79,18 +83,25 @@ class Sequential_Experiment_reader(QWidget):
         self.Class_label.setGeometry(160, 70, 800, 200)
         self.reader_chart.setGeometry(780, 10, 900, 900)
         self.image.setGeometry(350, 10, 900, 900)
-       
-
-    def closeEvent(self, event):
-        # ウィンドウが閉じられたときにシグナルを送信
-        self.EMGsinal_object.timer.stop()
-        self.dh.stop_delsys()
-        self.closed.emit()
-        event.accept()
-        
+               
     def save_emg(self,rawEMG):
-        pd.DataFrame(rawEMG).to_csv(f'./data/raw/trial{self.trial_}class{self.class_}.csv', mode='a', index = False, header=False)
-    
+        if self.file_flag==0:
+            config = configparser.ConfigParser()
+            config.read('./setting.ini')
+            save_path = config.get('settings', 'save_path')
+            c_task_path = os.path.join(save_path, 'c_task')
+            current_time = datetime.now().strftime("%Y%m%d_%H-%M-%S")
+            session_folder_name = f"session_{current_time}"
+            self.session_foler_path = os.path.join(c_task_path, session_folder_name)
+
+            try:
+                os.makedirs(self.session_foler_path)
+            except Exception as e:
+                print(f"エラー: ファルダの作成中にエラーが発生しました: {str(e)}")
+            self.file_flag=1
+        csvfile_name = f'trial{self.trial_}class{self.class_}.csv'
+        pd.DataFrame(rawEMG).to_csv(os.path.join(self.session_foler_path, csvfile_name), mode='a', index = False, header=False)
+         
     def update_label(self,flag):
         if flag:
             self.class_ = ((self.tmp) % (self.class_n)) + 1
@@ -125,8 +136,9 @@ class Sequential_Experiment_reader(QWidget):
         # ウィンドウが閉じられたときにシグナルを送信
         print('before closed')
         self.EMGsinal_object.timer.stop()
-        self.dh.stop_delsys()
+        #self.dh.stop_delsys()
         self.closed.emit()
+        self.deleteLater()  # ウィジェットを削除する準備をする
         event.accept()
         print('after close')
            

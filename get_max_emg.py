@@ -17,9 +17,10 @@ import os
 class GetMaxEMG(QWidget):
     closed = pyqtSignal()
     """メインウィンドウ"""
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,dh=None):
         super().__init__(parent)
-
+        self.dh = dh
+        self.save_flag=0
         self.back_button = QPushButton('終了',self)
         self.getEMG_button = QPushButton('EMG取得',self)
         self.label_state = QLabel('Are you ready ?',self)
@@ -30,7 +31,7 @@ class GetMaxEMG(QWidget):
 
     def getEMG(self):
         # 整流平滑化データ取得
-        rectifiedEMG = self.dh.get_emg(mode='notch->rect->lpf')
+        rectifiedEMG = self.dh.get_emg(mode='notchlpf')
         # データを保存
         pd.DataFrame(rectifiedEMG).to_csv(f'./max_emg_data/calibration_data.csv', mode='a', index = False, header=False)
         
@@ -52,22 +53,35 @@ class GetMaxEMG(QWidget):
         self.label_state.setAlignment(Qt.AlignCenter)
 
     def save_max_emg(self):
-        data = np.loadtxt('./max_emg_data/calibration_data.csv',delimiter=',')
-        np.savetxt('./max_emg_data/max_data.csv',np.max(data,axis=0))
+        if self.save_flag==1:
+            data = np.loadtxt('./max_emg_data/calibration_data.csv',delimiter=',')
+            if data.ndim == 1:
+                max_data = np.max(data)
+                max_data = np.array([max_data])
+            else:
+                max_data = np.max(data, axis=0)
+            np.savetxt('./max_emg_data/max_data.csv',max_data)
+        
         self.close()
+        
 
         
     def start_get_emg(self):
+        try:
+            shutil.rmtree('./max_emg_data/')
+        except FileNotFoundError:
+            pass  # ディレクトリが存在しない場合は無視
+        os.mkdir('./max_emg_data')
         self.label_state.setText('最大値EMG取得中…')
-        self.dh = DataHandle(self.ch)
-        self.dh.initialize_delsys()
+        self.save_flag=1
+        #self.dh = DataHandle(self.ch)
+        #self.dh.initialize_delsys() # EMG信号の初期化
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.getEMG)
         self.timer.start(1)
 
     def start(self):
-        shutil.rmtree('./max_emg_data/')
-        os.mkdir('./max_emg_data')
+        
         config = configparser.ConfigParser()
         config.read('./setting.ini')
         self.ch = config['settings'].getint('ch')
@@ -76,9 +90,11 @@ class GetMaxEMG(QWidget):
 
     def closeEvent(self, event):
         print('before closed')
-        self.timer.stop()
-        self.dh.stop_delsys()
+        if hasattr(self, 'timer'):
+            self.timer.stop()
+        #self.dh.stop_delsys()
         self.closed.emit()
+        self.deleteLater()  # ウィジェットを削除する準備をする
         event.accept()
         print('after close')
 

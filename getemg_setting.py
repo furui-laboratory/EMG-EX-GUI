@@ -18,15 +18,23 @@ from sequential_experiment_plot import Sequential_Experiment_plot
 from intermittently_experiment_reader import Intermittently_Experiment_reader
 from intermittently_experiment_plot import Intermittently_Experiment_plot
 import configparser
+import numpy as np
+from data_worker import DataWorker
 
 '''1試行ごとにEMGデータを取得できるモードを作成する必要がある'''
 
 class GetEMGSetting(QWidget):
     closed = pyqtSignal()
     """メインウィンドウ"""
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,dh=None):
         super().__init__(parent)
+        self.dh = dh
 
+        self.worker = DataWorker(self.dh)
+        self.worker.data_processed.connect(self.handle_data)
+        self.worker.start()
+
+        
         self.label_get_style = QLabel('取得方法',self)
         self.check_sequential = QCheckBox('全試行連続で取得',self)
         self.check_each = QCheckBox('各試行ごとに取得',self)
@@ -56,16 +64,33 @@ class GetEMGSetting(QWidget):
         self.setting_parameters()
         if self.check_reader_chart.isChecked():
             if self.check_sequential.isChecked():
-                self.experimentwindow = Sequential_Experiment_reader(self.ch,self.class_n,self.trial_n,self.sec_mes,self.sec_class_break)
+                self.experimentwindow = Sequential_Experiment_reader(self.ch,self.class_n,self.trial_n,self.sec_mes,self.sec_class_break,dh=self.dh)
             else:
-                self.experimentwindow = Intermittently_Experiment_reader(self.ch,self.class_n,1,self.sec_mes,self.sec_class_break)
+                self.experimentwindow = Intermittently_Experiment_reader(self.ch,self.class_n,1,self.sec_mes,self.sec_class_break,dh=self.dh)
         else:
             if self.check_sequential.isChecked():
-                self.experimentwindow = Sequential_Experiment_plot(self.ch,self.class_n,self.trial_n,self.sec_mes,self.sec_class_break)
+                self.experimentwindow = Sequential_Experiment_plot(self.ch,self.class_n,self.trial_n,self.sec_mes,self.sec_class_break,dh=self.dh)
             else:
-                self.experimentwindow = Intermittently_Experiment_plot(self.ch,self.class_n,1,self.sec_mes,self.sec_class_break)
-        self.experimentwindow.show()
+                self.experimentwindow = Intermittently_Experiment_plot(self.ch,self.class_n,1,self.sec_mes,self.sec_class_break,dh=self.dh)
         
+        self.experimentwindow.show()
+        self.stop_worker()
+        self.experimentwindow.closed.connect(self.window_closed)
+
+    def window_closed(self):
+        self.worker = DataWorker(self.dh)
+        self.worker.data_processed.connect(self.handle_data)
+        self.worker.start()
+        self.show()
+
+    def handle_data(self, data):
+        # Process EMG data here
+        pass
+
+    def stop_worker(self):
+        if self.worker:
+            self.worker.stop()
+            self.worker.wait()  # Wait until the worker thread finishes   
 
        
     def initUI(self):
@@ -105,6 +130,8 @@ class GetEMGSetting(QWidget):
         
     def closeEvent(self, event):
         print('before closed')
+        self.stop_worker()
         self.closed.emit()
+        self.deleteLater()  # ウィジェットを削除する準備をする
         event.accept()
         print('after close')# ウィンドウが閉じられたときにシグナルを送信

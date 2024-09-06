@@ -28,13 +28,16 @@ class PlotWindow(QWidget):
        
 
         self.plt = []
-        for c in range(self.ch):
-            self.plt.append(self.win.addPlot(rowSpan=1))
-            self.win.nextRow()
+        self.curves = []
+        
 
         for c in range(self.ch):
-            self.plt[c].setXRange(0, XRANGE)
-            self.plt[c].setYRange(-YRANGE,YRANGE)
+            plot=self.win.addPlot(row=c, col=0)
+            plot.setXRange(0, XRANGE)
+            plot.setYRange(-YRANGE,YRANGE)
+            curve = plot.plot(pen=(c * 85, 0, 255 - c * 85))
+            self.plt.append(plot)
+            self.curves.append(curve)
 
 
         self.CHUNK = 40
@@ -43,27 +46,45 @@ class PlotWindow(QWidget):
 
         self.timer = QtCore.QTimer()
 
-        self.data = np.zeros((self.ch, self.CHUNK))
-
-        self.curves = [[] for i in range(self.ch)]
+        self.data = np.zeros((self.ch, 14000))
+        self.current_column =0
         self.time = np.zeros(self.ch)
 
     def update(self,rawEMG):
+        newdata = rawEMG.T * 1000
+        if self.current_column + 40 > self.data.shape[1]:
+            self.data = np.roll(self.data, -40, axis=1)
+            self.current_column = self.data.data.shape[1] - 40
+        self.data[:, self.current_column:self.current_column + 40] = newdata
+        self.current_column += 40
+
         for c in range(self.ch):
-            self.data = rawEMG[:, c] * 1000
-            self.curve = self.plt[c].plot(pen="r")
-            self.curves[c].append(self.curve)
-            self.curve = self.curves[c][-1]
-            self.curve.setData(np.arange(self.time[c], self.time[c] + 40), self.data)
-            self.time[c] += 40
+            if self.current_column >14000:
+                start_col = self.current_column - 14000
+                self.curves[c].setData(self.data[c, start_col:self.current_column])
+            else:
+                self.curves[c].setData(self.data[c, :self.current_column])
 
        
     
-    def reset(self,flag):
-        if flag==False:
-            for c in range(self.ch):
-                self.plt[c].clear()
-                self.curves[c] = []
-                self.time[c] = 0
+    def reset(self, flag):
+        if not flag:
+        # Clear existing plots
+            self.win.clear()  # Clears the entire GraphicsLayoutWidget
 
+            self.plt = []
+            self.curves = []
+            self.data = np.zeros((self.ch, 14000))
+
+        # Re-add plots
+            for c in range(self.ch):
+                plot = self.win.addPlot(row=c, col=0)
+                plot.setXRange(0, XRANGE)
+                plot.setYRange(-YRANGE, YRANGE)
+                curve = plot.plot(pen=(c * 85, 0, 255 - c * 85))
+                self.plt.append(plot)
+                self.curves.append(curve)
+            self.data = np.zeros((self.ch, 14000))
+            self.current_column =0
+            self.time = np.zeros(self.ch)
     

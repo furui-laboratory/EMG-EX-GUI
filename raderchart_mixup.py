@@ -25,7 +25,7 @@ import pandas as pd
 
 class RaderChartMixUpWindow(QWidget):
 
-    def __init__(self,dh,ch,parent=None):
+    def __init__(self,ch,parent=None,dh=None):
         super().__init__(parent)
         self.dh = dh
         self.radius = 400
@@ -134,8 +134,9 @@ class RaderChartMixUpWindow(QWidget):
 
 class Mixupshow(QWidget):
     closed = pyqtSignal()
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,dh=None):
         super().__init__(parent)
+        self.dh = dh
         self.acquisition_motion1 = QPushButton('Acquisition of motion 1',self)
         self.acquisition_motion2 = QPushButton('Acquisition of motion 2',self)
         self.display_combined_motion = QPushButton('Display combined motion',self)
@@ -148,9 +149,9 @@ class Mixupshow(QWidget):
         config = configparser.ConfigParser()
         config.read('./setting.ini')
         self.ch = config['settings'].getint('ch')
-        dh = DataHandle(self.ch)
-        dh.initialize_delsys()
-        self.chart_widget = RaderChartMixUpWindow(dh,self.ch,self)
+        #dh = DataHandle(self.ch)
+        #dh.initialize_delsys()
+        self.chart_widget = RaderChartMixUpWindow(self.ch,self,dh=self.dh)
         self.initUI()
         
     def initUI(self):
@@ -181,9 +182,10 @@ class Mixupshow(QWidget):
     def closeEvent(self, event):
         print('before closed')
         self.chart_widget.timer.stop()
-        self.chart_widget.dh.stop_delsys()
+        #self.chart_widget.dh.stop_delsys()
         self.chart_widget.close()
         self.closed.emit()
+        self.deleteLater()  # ウィジェットを削除する準備をする
         event.accept()
         print('after close')# ウィンドウが閉じられたときにシグナルを送信
 

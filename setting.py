@@ -74,15 +74,27 @@ class Setting(QWidget):
         sec_class_break = int(self.rest_class.toPlainText())
         sec_trial_break = int(self.rest_trial.toPlainText())
         # データをiniファイルに書き込む
+        self.update_setting_ini('settings', 'ch', ch)
+        self.update_setting_ini('settings', 'class_n', class_n)
+        self.update_setting_ini('settings', 'trial_n', trial_n)
+        self.update_setting_ini('settings', 'sec_mes', sec_mes)
+        self.update_setting_ini('settings', 'sec_class_break', sec_class_break)
+        self.update_setting_ini('settings', 'sec_trial_break', sec_trial_break)
+        self.update_setting_ini('settings', 'image_path', self.image_path.toPlainText)
+        
+
+    def update_setting_ini(self, section, key, value, file_path='./setting.ini'):
         config = configparser.ConfigParser()
-        config['settings'] = {'ch': ch, 'class_n': class_n, 'trial_n': trial_n, 'sec_mes': sec_mes, 'sec_class_break': sec_class_break, 'sec_trial_break': sec_trial_break, 'image_path': self.image_path.toPlainText(), 'save_path': self.save_path.toPlainText()}
-        with open('./setting.ini', 'w') as f:
-            config.write(f)
+        config.read(file_path)
 
-       
+        if section not in config:
+            config.add_section(section)
+        if not isinstance(value, str):
+            value = str(value)
 
-
-
+        config[section][key] = value
+        with open(file_path, 'w') as configfile:
+            config.write(configfile)
         
        
     def initUI(self):

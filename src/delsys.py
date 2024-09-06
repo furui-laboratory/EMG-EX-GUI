@@ -89,6 +89,7 @@ class DataHandle:
         """
         data = self.dev.read()
         rawEMG = data.T
+        
 
         if mode == 'raw':
             return rawEMG
